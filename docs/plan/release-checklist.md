@@ -35,7 +35,7 @@ Git 연동 프로젝트는 연결된 `main`의 새 커밋을 자동 빌드·배�
 - GitHub Issues 피드백 링크와 GitHub 로그인이 필요하다는 접근 안내
 - 기기 설정·밝게·어둡게 테마 선택
 
-2026-10-10 Cloudflare Pages 배포 `c07c5e9`와 최종 후속 배포 `c98da08`을 확인했다. 마지막 배포 ID는 `10010bdf-6130-4a5b-b322-a3bbfedfad73`이며 상태는 `success`다. `curl.exe -I -L https://code-one-step.pages.dev/public/runner-frame.html`에서 308 리디렉션과 최종 200을 확인했고, 최종 200 및 `/public/runner-frame` 직접 요청의 200 모두 전체 실행기 CSP(`connect-src 'none'`, `worker-src blob:` 포함)를 반환했다. 앱 변경 배포 후에는 문제 풀이·로컬 진도 재개·백업 복원도 라이브 URL에서 스모크 점검한다.
+2026-10-10 Cloudflare Pages 배포 `c07c5e9`와 최종 보안·버전 앱 배포 `c98da08`을 확인했다. 앱 배포 ID `10010bdf-6130-4a5b-b322-a3bbfedfad73`의 상태는 `success`다. `curl.exe -I -L https://code-one-step.pages.dev/public/runner-frame.html`에서 308 리디렉션과 최종 200을 확인했고, 최종 200 및 `/public/runner-frame` 직접 요청의 200 모두 전체 실행기 CSP(`connect-src 'none'`, `worker-src blob:` 포함)를 반환했다. 이후 계획 문서 커밋도 Pages에 성공적으로 배포됐다. 앱 변경 배포 후에는 문제 풀이·로컬 진도 재개·백업 복원도 라이브 URL에서 스모크 점검한다.
 
 ## 피드백 경로
 
