@@ -29,7 +29,7 @@
 | H-03 | 클라우드 저장을 검토할 때만 | 같은 계정으로 여러 기기에서 진도 동기화가 필수인지 | 초기에는 같은 브라우저 저장으로 진행한다. | 미결정, 현재 차단 아님 |
 | H-04 | 서버 코드 실행을 검토할 때만 | 추가 운영비와 보안 운영 책임을 감수할지 | 초기에는 JavaScript Worker만 제공하고 서버 실행을 보류한다. | 미결정, 현재 차단 아님 |
 | H-05 | 실행 설정을 바꿀 수 있을 때 | 요청한 `gpt-6-luna`와 `xhigh` 조합을 실제 작업 모델로 선택할 수 있는지 | Codex 목표에 선호를 전달했다. 현재 작업 모델·추론 수준을 이 실행 도구에서 바꾸거나 읽을 수 없어 미확인 상태로 두고 구현은 계속한다. | 사용자의 선택은 보류, 작업은 비차단 |
-| H-06 | G8 실제 공개 직전 | Cloudflare 계정 연결과 Pages Git 연동 권한 승인, 실제 배포 URL 확인 | 사용자가 공개 저장소 `https://github.com/seonsun10/code-one-step`를 만들었다. 같은 저장소의 GitHub Issues를 피드백 창구로 쓰며 앱에 연결한다. 배포 방식은 기존 D-10 권고대로 Cloudflare Pages Git 연동(`main`, `npm run build`, `dist`)을 준비한다. GitHub Issues는 GitHub 로그인이 필요하다고 화면에 안내한다. 남은 단계는 Cloudflare 로그인/저장소 접근 승인, 프로젝트 생성, 무료 설정 확인, 실제 URL에서 출시 점검이다. | 저장소·브랜드·피드백 경로 확정; Cloudflare 계정/권한 및 공개 URL 대기 — G8만 차단 |
+| H-06 | G8 실제 공개 직전 | Cloudflare 계정 연결과 Pages Git 연동 권한 승인, 실제 배포 URL 확인 | 사용자가 공개 저장소 `https://github.com/seonsun10/code-one-step`를 만들었다. `origin/main`에 `ec2e63f`까지 푸시했고 같은 저장소의 GitHub Issues를 피드백 창구로 앱에 연결했다. 배포 방식은 기존 D-10 권고대로 Cloudflare Pages Git 연동(`main`, `npm run build`, `dist`)을 사용한다. GitHub Issues는 GitHub 로그인이 필요하다고 화면에 안내한다. 남은 단계는 Cloudflare 로그인/저장소 접근 승인, 프로젝트 생성, 무료 설정 확인, 실제 URL에서 출시 점검이다. | 저장소·브랜드·피드백 경로·코드 푸시 완료; Cloudflare 계정/권한 및 공개 URL 대기 — G8만 차단 |
 
 ## 오류 및 차단 기록
 

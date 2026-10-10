@@ -4,7 +4,7 @@
 
 ## 현재 배포 후보
 
-Cloudflare Pages 무료 등급을 정적 호스팅 후보로 선택했다. 앱에 서버 기능이나 사용자 API가 필요하지 않으며, `npm run build`가 생성하는 `dist/`만 올린다. Git 연동을 쓰면 Cloudflare가 연결된 GitHub/GitLab 저장소의 변경을 자동 빌드·배포한다. 공개 GitHub 저장소 `seonsun10/code-one-step`를 사용하고, 원격 코드 푸시 및 Issues 경로 연결 상태는 아래 진척 기록과 함께 갱신한다. Cloudflare 계정 연결 전까지 공개 URL은 없다.
+Cloudflare Pages 무료 등급을 정적 호스팅 후보로 선택했다. 앱에 서버 기능이나 사용자 API가 필요하지 않으며, `npm run build`가 생성하는 `dist/`만 올린다. Git 연동을 쓰면 Cloudflare가 연결된 GitHub/GitLab 저장소의 변경을 자동 빌드·배포한다. 공개 GitHub 저장소 `seonsun10/code-one-step`의 `main`에 검증한 코드를 푸시했고 Issues 경로도 사이트에 연결했다. Cloudflare 계정 연결 전까지 공개 URL은 없다.
 
 Cloudflare 공식 문서의 현재 Pages 무료 한도는 동시 빌드 1개, 월 500회 빌드, 사이트별 파일 20,000개, 파일당 25 MiB다. Pages의 정적 파일 요청은 무료·무제한으로 문서화되어 있다. 이 한도와 약관은 바뀔 수 있으므로 출시 때 다시 확인하며, 무료 영구 보장을 약속하지 않는다. Pages Functions를 추가하면 Workers 무료 사용량에 포함되므로 초기에는 사용하지 않는다.
 
