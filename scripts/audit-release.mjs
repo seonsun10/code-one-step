@@ -50,9 +50,26 @@ function auditContentSecurityPolicies(headersText) {
     .filter(({ name }) => name === 'content-security-policy')
     .map(({ value }) => ({ route, value })));
   const entryPolicies = policies.filter(({ route }) => route === '/');
+  const runnerRoutes = ['/public/runner-frame.html', '/public/runner-frame'];
 
   if (entryPolicies.length === 0) {
     violations.push('A Content-Security-Policy for the root path / is required.');
+  }
+
+  for (const route of runnerRoutes) {
+    const routePolicies = policies.filter((policy) => policy.route === route);
+    if (routePolicies.length !== 1) {
+      violations.push(`Exactly one Content-Security-Policy for runner route ${route} is required.`);
+      continue;
+    }
+
+    const connectDirective = routePolicies[0].value.split(';')
+      .map((directive) => directive.trim())
+      .find((directive) => /^connect-src\b/i.test(directive));
+    const connectSources = connectDirective?.split(/\s+/).slice(1).map((source) => source.toLowerCase()) ?? [];
+    if (connectSources.length !== 1 || connectSources[0] !== "'none'") {
+      violations.push(`Content-Security-Policy for runner route ${route} must disable outgoing connections with connect-src 'none'.`);
+    }
   }
 
   for (const { route, value } of policies) {

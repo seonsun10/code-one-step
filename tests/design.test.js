@@ -114,6 +114,14 @@ test('static release headers isolate the runner while keeping its parent frame u
   assert.match(staticHeaders, /Referrer-Policy:\s*strict-origin-when-cross-origin/);
   assert.match(staticHeaders, /Permissions-Policy:\s*camera=\(\), microphone=\(\), geolocation=\(\)/);
   assert.match(staticHeaders, /connect-src 'none';[^\n]*frame-ancestors 'self'/);
+  for (const route of ['/public/runner-frame.html', '/public/runner-frame']) {
+    const escapedRoute = route.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    assert.match(
+      staticHeaders,
+      new RegExp(`(?:^|\\n)${escapedRoute}\\r?\\n\\s+Content-Security-Policy: default-src 'none';[^\\n]*connect-src 'none';[^\\n]*frame-ancestors 'self'`, 'm'),
+      `Both the .html and clean URL runner routes need the isolated CSP (${route})`,
+    );
+  }
   assert.match(buildScript, /cp\(resolve\(projectRoot, '_headers'\), resolve\(outputDirectory, '_headers'\)\)/);
   assert.match(buildScript, /await rm\(outputDirectory, \{ recursive: true, force: true \}\)/);
 });

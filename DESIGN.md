@@ -100,5 +100,5 @@
 
 ## Open questions
 
-- [ ] Confirm the final public brand name and logo direction — owner: user — impact: branding before public launch; the working name is safe for local implementation.
-- [ ] Choose the initial public feedback repository and approve any public source/hosting connection — owner: user — impact: G8 external publication remains gated.
+- [x] Confirm the final public brand name and logo direction — `코드한걸음 (Code One Step)` matches the public GitHub repository; the existing code mark is the wordmark companion.
+- [x] Choose the initial public feedback repository and approve any public source/hosting connection — `seonsun10/code-one-step` is connected to Cloudflare Pages and GitHub Issues; the live site is `https://code-one-step.pages.dev/`.

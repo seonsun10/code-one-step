@@ -13,6 +13,10 @@ async function makeProject() {
   await writeFile(join(projectRoot, 'dist', '_headers'), [
     '/',
     "  Content-Security-Policy: default-src 'self'; connect-src 'self'",
+    '/public/runner-frame.html',
+    "  Content-Security-Policy: default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' blob:; worker-src blob:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'",
+    '/public/runner-frame',
+    "  Content-Security-Policy: default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' blob:; worker-src blob:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'",
     '',
   ].join('\n'));
   return projectRoot;
@@ -50,6 +54,24 @@ test('release audit rejects server directories, environment files, and runtime d
     await writeFile(join(projectRoot, 'package.json'), JSON.stringify({ peerDependencies: { peer: '1.0.0' } }));
     const peerResult = await auditRelease({ projectRoot });
     assert.ok(peerResult.violations.some((issue) => issue.includes('Peer runtime package dependencies')));
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
+test('release audit requires isolated CSP on both runner URLs', async () => {
+  const projectRoot = await makeProject();
+  try {
+    const headersPath = join(projectRoot, 'dist', '_headers');
+    const validHeaders = await (await import('node:fs/promises')).readFile(headersPath, 'utf8');
+    await writeFile(headersPath, validHeaders.replace(/\/public\/runner-frame\r?\n[\s\S]*?(?=\r?\n\S|$)/, ''));
+
+    const missingCleanUrl = await auditRelease({ projectRoot });
+    assert.ok(missingCleanUrl.violations.some((issue) => issue.includes('runner route /public/runner-frame')));
+
+    await writeFile(headersPath, validHeaders.replaceAll("connect-src 'none'", "connect-src 'self'"));
+    const allowsConnections = await auditRelease({ projectRoot });
+    assert.ok(allowsConnections.violations.some((issue) => issue.includes("runner route /public/runner-frame.html must disable outgoing connections")));
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
   }
