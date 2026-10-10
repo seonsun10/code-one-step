@@ -8,7 +8,7 @@ Cloudflare Pages Git 연동으로 공개했다. 프로젝트 `code-one-step`은 
 
 Cloudflare 공식 문서의 현재 Pages 무료 한도는 동시 빌드 1개, 월 500회 빌드, 사이트별 파일 20,000개, 파일당 25 MiB다. Pages의 정적 파일 요청은 무료·무제한으로 문서화되어 있다. 이 한도와 약관은 바뀔 수 있으므로 출시 때 다시 확인하며, 무료 영구 보장을 약속하지 않는다. Pages Functions를 추가하면 Workers 무료 사용량에 포함되므로 초기에는 사용하지 않는다.
 
-로컬 공개 전에는 `npm run check:release`를 실행한다. 이 명령은 정적 빌드를 새로 만들고, 필수 `index.html`/`_headers`, Pages 파일 수·크기 제한, 서버/개발 폴더, 환경 설정, 학습 백업 및 일반·선택적·peer runtime 패키지 의존성의 부재를 검사한다. 배포 산출물의 CSP를 직접 읽어 루트 경로 `/` 정책 존재, 정책 제거 규칙 부재, 명시적 `connect-src 'self'`/`'none'`, 외부 스크립트 출처 부재를 확인한다. 코드 실행기 경로 `/public/runner-frame.html`과 Cloudflare의 확장자 제거 경로 `/public/runner-frame`에는 각각 `connect-src 'none'`인 격리 CSP가 있는지 확인한다. 현재 Pages 한도는 공식 자료를 확인한 2026-10-10 기준이며, 한도가 달라지면 `scripts/audit-release.mjs`의 상수와 이 문서를 함께 갱신한다.
+로컬 공개 전에는 `npm run check:release`를 실행한다. 이 명령은 정적 빌드를 새로 만들고, 필수 `index.html`/`_headers`, Pages 파일 수·크기 제한, 서버/개발 폴더, 환경 설정, 학습 백업 및 일반·선택적·peer runtime 패키지 의존성의 부재를 검사한다. 배포 산출물 CSP는 앱의 정확한 네 경로(`/`, `/index.html`, `/public/runner-frame.html`, `/public/runner-frame`)에서만 허용하고 와일드카드·자리표시자·절대 URL 규칙을 거부한다. 실행기 양 경로에는 `default-src 'none'`, `connect-src 'none'`, `worker-src blob:`, `object-src 'none'`, `base-uri 'none'`, `form-action 'none'`, `frame-ancestors 'self'`를 포함한 전체 격리 정책이 정확히 있어야 한다. 배포 뒤에는 `.html` 리디렉션 최종 응답과 clean URL 직접 요청의 상태 코드 및 CSP를 확인한다. 현재 Pages 한도는 공식 자료를 확인한 2026-10-10 기준이며, 한도가 달라지면 `scripts/audit-release.mjs`의 상수와 이 문서를 함께 갱신한다.
 
 이 프로젝트는 앞으로 멤버십을 검토할 계획이 있다. 무료 Pages 후보는 지금의 광고·결제·서버 기능 없는 공개 교육용 초기에만 검토한다. 구독이나 상업 기능을 붙이기 전 Cloudflare 이용 조건과 서비스 적합성을 다시 확인하고 호스트 결정을 새로 기록한다.
 
@@ -21,6 +21,7 @@ Git 연동 프로젝트는 연결된 `main`의 새 커밋을 자동 빌드·배�
 - [Cloudflare Pages Git 연동과 Direct Upload 제한](https://developers.cloudflare.com/pages/configuration/git-integration/)
 - [Cloudflare Pages 빌드 명령과 출력 폴더](https://developers.cloudflare.com/pages/configuration/build-configuration/)
 - [Cloudflare Pages 보안 헤더 파일](https://developers.cloudflare.com/pages/configuration/headers/)
+- [Cloudflare Pages HTML 경로 제공](https://developers.cloudflare.com/pages/configuration/serving-pages/)
 - [GitHub Pages 이용 가능 저장소와 사이트 제한](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages)
 - [GitHub Pages 사용 제한 및 SaaS 적합성](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits)
 
@@ -34,7 +35,7 @@ Git 연동 프로젝트는 연결된 `main`의 새 커밋을 자동 빌드·배�
 - GitHub Issues 피드백 링크와 GitHub 로그인이 필요하다는 접근 안내
 - 기기 설정·밝게·어둡게 테마 선택
 
-배포 후에는 `curl -I -L`로 코드 실행기의 `.html` 주소와 확장자 없는 최종 주소를 모두 확인하고, 최종 200 응답에도 `Content-Security-Policy`가 있으며 `connect-src 'none'`인지 검사한다. 앱 변경 배포 후에는 문제 풀이·로컬 진도 재개·백업 복원도 라이브 URL에서 스모크 점검한다.
+2026-10-10 Cloudflare Pages 배포 `c07c5e9` 후 `curl.exe -I -L https://code-one-step.pages.dev/public/runner-frame.html`에서 308 리디렉션과 최종 200을 확인했다. 최종 200과 `/public/runner-frame` 직접 요청의 200 모두 전체 실행기 CSP 및 `connect-src 'none'`을 반환했다. 후속 앱 커밋 배포에서도 이 두 HTTP 응답을 다시 확인한다. 앱 변경 배포 후에는 문제 풀이·로컬 진도 재개·백업 복원도 라이브 URL에서 스모크 점검한다.
 
 ## 피드백 경로
 

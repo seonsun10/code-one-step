@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { auditRelease } from '../scripts/audit-release.mjs';
@@ -59,11 +59,11 @@ test('release audit rejects server directories, environment files, and runtime d
   }
 });
 
-test('release audit requires isolated CSP on both runner URLs', async () => {
+test('release audit requires the complete isolated CSP on both runner URLs', async () => {
   const projectRoot = await makeProject();
   try {
     const headersPath = join(projectRoot, 'dist', '_headers');
-    const validHeaders = await (await import('node:fs/promises')).readFile(headersPath, 'utf8');
+    const validHeaders = await readFile(headersPath, 'utf8');
     await writeFile(headersPath, validHeaders.replace(/\/public\/runner-frame\r?\n[\s\S]*?(?=\r?\n\S|$)/, ''));
 
     const missingCleanUrl = await auditRelease({ projectRoot });
@@ -71,7 +71,47 @@ test('release audit requires isolated CSP on both runner URLs', async () => {
 
     await writeFile(headersPath, validHeaders.replaceAll("connect-src 'none'", "connect-src 'self'"));
     const allowsConnections = await auditRelease({ projectRoot });
-    assert.ok(allowsConnections.violations.some((issue) => issue.includes("runner route /public/runner-frame.html must disable outgoing connections")));
+    assert.ok(allowsConnections.violations.some((issue) => issue.includes("runner route /public/runner-frame.html must set connect-src 'none'")));
+
+    for (const [directive, replacement, expectedIssue] of [
+      ["default-src 'none'", "default-src 'self'", 'must set default-src'],
+      ["script-src 'unsafe-inline' 'unsafe-eval' blob:", "script-src 'self'", 'must set script-src'],
+      ['worker-src blob:', '', 'must set worker-src'],
+      ["object-src 'none'", "object-src 'self'", 'must set object-src'],
+      ["base-uri 'none'", "base-uri 'self'", 'must set base-uri'],
+      ["form-action 'none'", "form-action 'self'", 'must set form-action'],
+      ["frame-ancestors 'self'", "frame-ancestors 'none'", 'must set frame-ancestors'],
+    ]) {
+      await writeFile(headersPath, validHeaders.replaceAll(directive, replacement));
+      const weakenedResult = await auditRelease({ projectRoot });
+      assert.ok(weakenedResult.violations.some((issue) => issue.includes(expectedIssue)), `${directive} must be enforced`);
+    }
+
+    const additionalRunnerDirective = validHeaders.replace(
+      "frame-ancestors 'self'",
+      "frame-ancestors 'self'; img-src https://example.test",
+    );
+    await writeFile(headersPath, additionalRunnerDirective);
+    const extraSourceResult = await auditRelease({ projectRoot });
+    assert.ok(extraSourceResult.violations.some((issue) => issue.includes('runner route /public/runner-frame.html has unexpected img-src')));
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
+test('release audit rejects patterned CSP rules that can overlap the isolated runner', async () => {
+  const projectRoot = await makeProject();
+  try {
+    const headersPath = join(projectRoot, 'dist', '_headers');
+    const validHeaders = await readFile(headersPath, 'utf8');
+    await writeFile(headersPath, [
+      '/*',
+      "  Content-Security-Policy: default-src 'self'; connect-src 'self'",
+      validHeaders,
+    ].join('\n'));
+
+    const result = await auditRelease({ projectRoot });
+    assert.ok(result.violations.some((issue) => issue.includes('wildcard, placeholder, and absolute URL patterns')));
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
   }

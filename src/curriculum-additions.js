@@ -110,12 +110,12 @@ export const curriculumAdditions = {
     version: 'Python 3.15.0',
     reviewedAt: '2026-10-10',
     sources: [
-      { label: 'Python 3.15.0 공식 문서', url: 'https://docs.python.org/3/' },
-      { label: 'Python 3.15 새 기능과 변경사항', url: 'https://docs.python.org/3/whatsnew/3.15.html' },
+      { label: 'Python 3.15.0 공식 문서', url: 'https://docs.python.org/3.15/' },
+      { label: 'Python 3.15 새 기능과 변경사항', url: 'https://docs.python.org/3.15/whatsnew/3.15.html' },
       { label: 'Python 3.15.0 릴리스 정보', url: 'https://www.python.org/downloads/release/python-3150/' },
-      { label: 'Python 자습서: 제어 흐름과 함수', url: 'https://docs.python.org/3/tutorial/controlflow.html' },
-      { label: 'Python 자습서: 자료 구조와 리스트', url: 'https://docs.python.org/3/tutorial/datastructures.html' },
-      { label: 'Python 3.15 내장 함수', url: 'https://docs.python.org/3/library/functions.html' },
+      { label: 'Python 자습서: 제어 흐름과 함수', url: 'https://docs.python.org/3.15/tutorial/controlflow.html' },
+      { label: 'Python 자습서: 자료 구조와 리스트', url: 'https://docs.python.org/3.15/tutorial/datastructures.html' },
+      { label: 'Python 3.15 내장 함수', url: 'https://docs.python.org/3.15/library/functions.html' },
     ],
     lessonOrder: ['py-variables', 'py-conditions', 'py-loops', 'py-functions', 'py-lists'],
     topics: [

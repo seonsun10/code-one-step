@@ -51,6 +51,7 @@ function auditContentSecurityPolicies(headersText) {
     .map(({ value }) => ({ route, value })));
   const entryPolicies = policies.filter(({ route }) => route === '/');
   const runnerRoutes = ['/public/runner-frame.html', '/public/runner-frame'];
+  const exactApplicationRoutes = new Set(['/', '/index.html', ...runnerRoutes]);
 
   if (entryPolicies.length === 0) {
     violations.push('A Content-Security-Policy for the root path / is required.');
@@ -63,12 +64,46 @@ function auditContentSecurityPolicies(headersText) {
       continue;
     }
 
-    const connectDirective = routePolicies[0].value.split(';')
-      .map((directive) => directive.trim())
-      .find((directive) => /^connect-src\b/i.test(directive));
-    const connectSources = connectDirective?.split(/\s+/).slice(1).map((source) => source.toLowerCase()) ?? [];
-    if (connectSources.length !== 1 || connectSources[0] !== "'none'") {
-      violations.push(`Content-Security-Policy for runner route ${route} must disable outgoing connections with connect-src 'none'.`);
+    const directives = new Map();
+    const duplicateDirectives = new Set();
+    for (const directive of routePolicies[0].value.split(';')) {
+      const [rawName, ...sources] = directive.trim().split(/\s+/);
+      const name = rawName?.toLowerCase();
+      if (!name) continue;
+      if (directives.has(name)) duplicateDirectives.add(name);
+      directives.set(name, sources.map((source) => source.toLowerCase()));
+    }
+
+    const requiredDirectives = new Map([
+      ['default-src', ["'none'"]],
+      ['script-src', ["'unsafe-inline'", "'unsafe-eval'", 'blob:']],
+      ['worker-src', ['blob:']],
+      ['connect-src', ["'none'"]],
+      ['object-src', ["'none'"]],
+      ['base-uri', ["'none'"]],
+      ['form-action', ["'none'"]],
+      ['frame-ancestors', ["'self'"]],
+    ]);
+
+    for (const name of duplicateDirectives) {
+      violations.push(`Content-Security-Policy for runner route ${route} repeats ${name}.`);
+    }
+    for (const [name, requiredSources] of requiredDirectives) {
+      const actualSources = directives.get(name);
+      if (!actualSources || actualSources.length !== requiredSources.length || requiredSources.some((source) => !actualSources.includes(source))) {
+        violations.push(`Content-Security-Policy for runner route ${route} must set ${name} ${requiredSources.join(' ')}.`);
+      }
+    }
+    for (const name of directives.keys()) {
+      if (!requiredDirectives.has(name)) {
+        violations.push(`Content-Security-Policy for runner route ${route} has unexpected ${name}.`);
+      }
+    }
+  }
+
+  for (const { route } of policies) {
+    if (!exactApplicationRoutes.has(route)) {
+      violations.push(`Content-Security-Policy rules must use an exact application route; wildcard, placeholder, and absolute URL patterns are not allowed: ${route}.`);
     }
   }
 

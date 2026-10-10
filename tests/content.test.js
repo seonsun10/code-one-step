@@ -198,7 +198,9 @@ test('version records match each track and link to official primary documentatio
   }
 
   const pythonSources = tracks.find((track) => track.id === 'python').contentReview.sources.map((source) => source.url);
-  assert.ok(pythonSources.includes('https://docs.python.org/3/'));
-  assert.ok(pythonSources.includes('https://docs.python.org/3/whatsnew/3.15.html'));
+  assert.ok(pythonSources.includes('https://docs.python.org/3.15/'));
+  assert.ok(pythonSources.includes('https://docs.python.org/3.15/whatsnew/3.15.html'));
+  assert.ok(pythonSources.includes('https://docs.python.org/3.15/tutorial/controlflow.html'));
+  assert.ok(pythonSources.includes('https://docs.python.org/3.15/library/functions.html'));
   assert.ok(pythonSources.includes('https://www.python.org/downloads/release/python-3150/'));
 });
