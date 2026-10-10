@@ -55,6 +55,22 @@ test('release audit rejects server directories, environment files, and runtime d
   }
 });
 
+test('release audit rejects both current and legacy learner backup filenames', async () => {
+  const projectRoot = await makeProject();
+  try {
+    for (const fileName of ['code-one-step-progress-2026-10-10.json', 'study-web-progress-2026-10-10.json']) {
+      const backupPath = join(projectRoot, 'dist', fileName);
+      await writeFile(backupPath, '{"format":"study-web-progress"}');
+      const result = await auditRelease({ projectRoot });
+      assert.equal(result.ok, false, `${fileName} must never be shipped`);
+      assert.ok(result.violations.some((issue) => issue.includes(fileName)));
+      await rm(backupPath);
+    }
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
 test('release audit rejects CSP policies that permit connections outside the site', async () => {
   const projectRoot = await makeProject();
   try {

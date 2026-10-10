@@ -88,7 +88,7 @@ export function parseBackup(text) {
   }
 
   if (!backup || backup.format !== PROGRESS_FORMAT || backup.version !== PROGRESS_VERSION || !backup.progress) {
-    throw new TypeError('Study Web 백업 파일 형식이나 버전을 확인할 수 없습니다.');
+    throw new TypeError('코드한걸음 백업 파일 형식이나 버전을 확인할 수 없습니다.');
   }
 
   if (!Array.isArray(backup.progress.completedLessonIds) || !Array.isArray(backup.progress.answers)) {

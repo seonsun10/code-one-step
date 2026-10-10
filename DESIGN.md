@@ -6,7 +6,7 @@
 - Date: 2026-10-09
 - Product surfaces: responsive Korean-first programming lessons, exercises, track navigation, and local progress profile.
 - Evidence reviewed: `docs/rules/design.md`, `docs/rules/product.md`, `docs/rules/content.md`, `src/main.js`, `src/styles.css`, `src/content.js`, and the local Java track view at `http://localhost:4175/#/track/java`.
-- Assumption: `Study Web` is a working name; brand assets are provisional. No approved logo or external visual reference exists.
+- Brand: `코드한걸음 (Code One Step)`, selected to match the public GitHub repository. The existing code mark remains the wordmark companion; no separate logo asset is needed for this release.
 
 ## Brand
 

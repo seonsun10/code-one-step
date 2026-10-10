@@ -15,3 +15,4 @@
 # Temporary restore fixtures and exported learner records
 *.tmp.json
 study-web-progress-*.json
+code-one-step-progress-*.json

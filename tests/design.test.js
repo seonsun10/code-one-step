@@ -22,6 +22,13 @@ test('small screens use the fixed three-item mobile navigation', () => {
   assert.match(styles, /\.mobile-nav\s+\.nav-link\s*\{[^}]*font-size:\s*14px/);
 });
 
+test('the visible brand and feedback link use the selected public project', () => {
+  assert.match(html, /<title>코드한걸음 — 배우고, 풀고, 이어가기<\/title>/);
+  assert.match(mainScript, /aria-label="코드한걸음 내 학습실"/);
+  assert.match(mainScript, /https:\/\/github\.com\/seonsun10\/code-one-step\/issues\/new\/choose/);
+  assert.match(mainScript, /target="_blank" rel="noopener noreferrer" aria-label="GitHub에서 학습 오류나 접근성 문제 제보하기 \(GitHub 로그인 필요\)"/);
+});
+
 function hexColor(value) {
   return value.match(/[0-9a-f]{2}/gi).map((channel) => Number.parseInt(channel, 16));
 }

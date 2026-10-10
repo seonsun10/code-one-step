@@ -4,7 +4,7 @@
 
 ## 현재 배포 후보
 
-Cloudflare Pages 무료 등급을 정적 호스팅 후보로 선택했다. 앱에 서버 기능이나 사용자 API가 필요하지 않으며, `npm run build`가 생성하는 `dist/`만 올린다. Git 연동을 쓰면 Cloudflare가 연결된 GitHub/GitLab 저장소의 변경을 자동 빌드·배포한다. 로컬 Git 저장소와 안전한 제외 규칙은 준비했지만, 원격 저장소와 Cloudflare 계정 연결은 아직 없어 공개 URL은 없다.
+Cloudflare Pages 무료 등급을 정적 호스팅 후보로 선택했다. 앱에 서버 기능이나 사용자 API가 필요하지 않으며, `npm run build`가 생성하는 `dist/`만 올린다. Git 연동을 쓰면 Cloudflare가 연결된 GitHub/GitLab 저장소의 변경을 자동 빌드·배포한다. 공개 GitHub 저장소 `seonsun10/code-one-step`를 사용하고, 원격 코드 푸시 및 Issues 경로 연결 상태는 아래 진척 기록과 함께 갱신한다. Cloudflare 계정 연결 전까지 공개 URL은 없다.
 
 Cloudflare 공식 문서의 현재 Pages 무료 한도는 동시 빌드 1개, 월 500회 빌드, 사이트별 파일 20,000개, 파일당 25 MiB다. Pages의 정적 파일 요청은 무료·무제한으로 문서화되어 있다. 이 한도와 약관은 바뀔 수 있으므로 출시 때 다시 확인하며, 무료 영구 보장을 약속하지 않는다. Pages Functions를 추가하면 Workers 무료 사용량에 포함되므로 초기에는 사용하지 않는다.
 
@@ -12,7 +12,7 @@ Cloudflare 공식 문서의 현재 Pages 무료 한도는 동시 빌드 1개, �
 
 이 프로젝트는 앞으로 멤버십을 검토할 계획이 있다. 무료 Pages 후보는 지금의 광고·결제·서버 기능 없는 공개 교육용 초기에만 검토한다. 구독이나 상업 기능을 붙이기 전 Cloudflare 이용 조건과 서비스 적합성을 다시 확인하고 호스트 결정을 새로 기록한다.
 
-Cloudflare Pages Git 연동은 공개 저장소와 비공개 저장소를 지원하지만, Git 연동으로 만든 Pages 프로젝트는 나중에 Direct Upload 방식으로 바꿀 수 없다. 기본 경로는 Git 연동이며, 최초 Pages 프로젝트를 만들기 전에 방식을 확정한다. 직접 업로드를 선택하면 저장소 연결 없이 `dist/`를 수동으로 올릴 수 있지만, 업데이트도 직접 해야 한다. 현재 로컬 `main`에는 앱과 G8 준비 작업이 커밋되어 있지만 원격은 비어 있다. 원격 배포 전에 `git status`를 확인하고 미커밋 변경이 있으면 검증 후 커밋한다. `gh`와 `wrangler` CLI 및 Cloudflare/GitHub 자격 증명은 이 환경에 없다. 현재 빌드 출력은 GitHub Pages보다 Cloudflare Pages에 맞춘 `_headers` 보안 헤더를 포함한다.
+Cloudflare Pages Git 연동은 공개 저장소와 비공개 저장소를 지원하지만, Git 연동으로 만든 Pages 프로젝트는 나중에 Direct Upload 방식으로 바꿀 수 없다. 기본 경로는 Git 연동이며, 최초 Pages 프로젝트를 만들기 전에 방식을 확정한다. 직접 업로드를 선택하면 저장소 연결 없이 `dist/`를 수동으로 올릴 수 있지만, 업데이트도 직접 해야 한다. 배포 전 `git status`를 확인하고 미커밋 변경이 있으면 검증 후 커밋한다. `gh`와 `wrangler` CLI 및 Cloudflare 자격 증명은 이 환경에 없다. 현재 빌드 출력은 GitHub Pages보다 Cloudflare Pages에 맞춘 `_headers` 보안 헤더를 포함한다.
 
 참고한 공식 자료:
 
@@ -61,10 +61,10 @@ Git 원격 저장소 연결을 원하지 않으면 Pages 프로젝트를 **Direc
 - [x] 로컬 실행 명령 `npm run check:release`로 위 산출물 경계 검사를 반복할 수 있도록 자동화한다.
 - [x] 다섯 트랙의 23개 단원·세 단계 순서, 문제 풀이 데이터와 공식 버전 출처를 자동 검사한다.
 - [x] 기기 설정/밝게/어둡게 표시 선택, 테마 저장, 대비와 모바일 핵심 화면을 확인한다.
-- [ ] 선택한 공개 제보 저장소의 Issues URL을 학습 화면에 연결하고 접근성 안내를 확인한다.
+- [x] 공개 소스 저장소와 함께 쓸 GitHub Issues 제보 경로를 학습 화면에 연결하고 로그인 필요를 알린다.
 - [ ] 최초 공개 직전에 공식 기술 버전·호환 범위를 다시 확인하고 문서 검토일을 갱신한다.
-- [ ] 사용자가 GitHub/GitLab 저장소 소유자와 공개 범위를 정하고 저장소를 제공한다.
-- [ ] Pages 프로젝트를 만들기 전에 Git 연동 또는 직접 업로드 방식을 선택한다. 선택 후 같은 프로젝트에서 배포 방식 전환은 지원되지 않는다.
+- [x] 사용자가 공개 GitHub 저장소 `seonsun10/code-one-step`를 제공했다.
+- [x] D-10 권고에 따라 Cloudflare Pages Git 연동을 배포 방식으로 선택했다. 저장소 원격 연결은 완료했고 Pages 계정 연결은 아래 단계에서 진행한다.
 - [ ] 사용자가 Cloudflare 계정에서 해당 저장소 연결을 승인한다.
 - [ ] 공개 사이트 게시 직전에 공개 대상으로 이 프로젝트를 노출하는 확인을 받는다.
 - [ ] Cloudflare Pages Git 연동을 만들고 production branch, `npm run build`, `dist/`를 설정한다.

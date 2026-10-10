@@ -62,5 +62,5 @@ const server = createServer((request, response) => {
 
 const port = Number(process.env.PORT ?? 4173);
 server.listen(port, '127.0.0.1', () => {
-  process.stdout.write(`Study Web preview: http://127.0.0.1:${port}\n`);
+  process.stdout.write(`코드한걸음 미리보기: http://127.0.0.1:${port}\n`);
 });

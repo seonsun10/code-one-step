@@ -78,9 +78,9 @@ function shell(page, content) {
   const savedStatus = getStorageMode();
   return `<div class="app-shell">
     <aside class="sidebar" aria-label="주요 탐색">
-      <a class="brand" href="#/home" aria-label="Study Web 내 학습실">
+      <a class="brand" href="#/home" aria-label="코드한걸음 내 학습실">
         <span class="brand-mark" aria-hidden="true">&lt;/&gt;</span>
-        <span class="brand-name">study<span>web</span></span>
+        <span class="brand-name">코드한<span>걸음</span></span>
       </a>
       <div class="sidebar-label">학습 공간</div>
       <nav class="primary-nav">
@@ -104,7 +104,7 @@ function shell(page, content) {
     </aside>
     <div class="app-column">
       <header class="topbar">
-        <div class="breadcrumbs"><span>Study Web</span><span aria-hidden="true">/</span><strong>${routeLabels[page] || '내 학습실'}</strong></div>
+        <div class="breadcrumbs"><span>코드한걸음</span><span aria-hidden="true">/</span><strong>${routeLabels[page] || '내 학습실'}</strong></div>
         <div class="topbar-actions">
           <label class="theme-control"><span>화면</span><select data-action="theme" aria-label="화면 테마"><option value="system" ${themePreference === 'system' ? 'selected' : ''}>기기 설정</option><option value="light" ${themePreference === 'light' ? 'selected' : ''}>밝게</option><option value="dark" ${themePreference === 'dark' ? 'selected' : ''}>어둡게</option></select></label>
           <span class="save-indicator"><i aria-hidden="true"></i>${escapeHtml(savedStatus)}</span>
@@ -112,7 +112,7 @@ function shell(page, content) {
         </div>
       </header>
       <main id="main-content" class="page-content">${content}</main>
-      <footer class="site-footer"><span>Study Web</span><span>각 단원에는 설명, 예제, 연습 문제가 있어요.</span><a href="#/profile">기록 백업</a></footer>
+      <footer class="site-footer"><span>코드한걸음</span><span>각 단원에는 설명, 예제, 연습 문제가 있어요.</span><a href="https://github.com/seonsun10/code-one-step/issues/new/choose" target="_blank" rel="noopener noreferrer" aria-label="GitHub에서 학습 오류나 접근성 문제 제보하기 (GitHub 로그인 필요)">문제 제보</a><a href="#/profile">기록 백업</a></footer>
     </div>
     <nav class="mobile-nav" aria-label="모바일 탐색">
       ${navLink('home', '학습실', '⌂', page)}
@@ -471,7 +471,7 @@ function exportProgress() {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
   anchor.href = url;
-  anchor.download = `study-web-progress-${new Date().toISOString().slice(0, 10)}.json`;
+  anchor.download = `code-one-step-progress-${new Date().toISOString().slice(0, 10)}.json`;
   document.body.append(anchor);
   anchor.click();
   anchor.remove();

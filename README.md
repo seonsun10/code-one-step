@@ -1,10 +1,10 @@
-# Study Web
+# 코드한걸음 (Code One Step)
 
 사람들이 프로그래밍 언어와 프레임워크를 배우고, 여러 유형의 문제를 풀며, 자신의 학습 진도를 이어갈 수 있는 학습 사이트를 만들기 위한 프로젝트입니다.
 
 ## 현재 상태
 
-- G1–G7 구현·검증과 추가 교육과정 G9를 마쳤습니다. G8의 로컬 공개 준비는 완료했으며 실제 배포 URL과 피드백 저장소 연결은 외부 선택이 남아 있습니다. [진척 관리 문서](docs/plan/progress.md)와 [오류·도움 기록](docs/plan/decisions-and-help.md)을 확인하세요.
+- G1–G7 구현·검증과 추가 교육과정 G9를 마쳤습니다. 공개 GitHub 저장소를 연결하고 Issues를 제보 경로로 사용합니다. G8의 실제 Cloudflare 계정 연결과 배포 URL은 남아 있습니다. [진척 관리 문서](docs/plan/progress.md)와 [오류·도움 기록](docs/plan/decisions-and-help.md)을 확인하세요.
 - JavaScript 5개, Python 5개, Java 5개, Spring Boot 4개, React 4개로 총 23개 학습 단원이 있습니다. 각 트랙은 3단계로 구성됩니다. [단계·버전·공식 출처](docs/plan/content-roadmap.md)
 - 객관식, 주관식, 오류 줄 찾기, 코드 수정 문제를 제공합니다. JavaScript 문제는 브라우저에서 실행할 수 있습니다. Python·Java·프레임워크 코드는 현재 학습·분석용이며 사이트 안에서 실행하지 않습니다.
 - 초기 버전은 모두가 무료로 이용할 수 있도록 설계합니다.
@@ -38,3 +38,4 @@ npm run preview
 - [결정 사항, 오류, 도움 요청](docs/plan/decisions-and-help.md)
 - [무료 공개 및 출시 체크리스트](docs/plan/release-checklist.md)
 - [단계별 콘텐츠·버전 로드맵](docs/plan/content-roadmap.md)
+- [GitHub 문제 제보](https://github.com/seonsun10/code-one-step/issues)

@@ -148,7 +148,7 @@ export async function auditRelease({
 
       const fileName = basename(relativePath).toLowerCase();
       if (/^\.env(?:\..*)?$/.test(fileName)) violations.push(`Environment file found: ${relativePath}`);
-      if (/^(?:study-web-progress-.*\.json|.*\.tmp\.json)$/.test(fileName)) {
+      if (/^(?:study-web-progress-.*\.json|code-one-step-progress-.*\.json|.*\.tmp\.json)$/.test(fileName)) {
         violations.push(`Local learner data or temporary file found: ${relativePath}`);
       }
       if (fileName === '_worker.js' || fileName === 'package.json' || fileName === 'package-lock.json') {
