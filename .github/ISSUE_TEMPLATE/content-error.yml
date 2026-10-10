@@ -1,0 +1,25 @@
+name: 학습 내용 오류 제보
+description: 정답, 설명, 예제, 출처가 잘못되었거나 오래된 경우 알려 주세요.
+title: "[학습 내용] "
+body:
+  - type: input
+    id: learning-unit
+    attributes:
+      label: 학습 단원
+      description: 화면에 나온 학습 단원 이름이나 공개 URL을 적어 주세요.
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: 어떤 내용이 문제인가요?
+      description: 현재 내용과 기대하는 내용을 설명해 주세요. 학습 기록 백업 파일이나 개인정보는 올리지 마세요.
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: 참고할 공식 출처 (선택)
+      description: 공식 문서 URL이나 버전을 알고 있다면 적어 주세요.
+    validations:
+      required: false

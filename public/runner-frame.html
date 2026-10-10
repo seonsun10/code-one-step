@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' blob:; worker-src blob:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <title>Isolated code runner</title>
+  </head>
+  <body>
+    <script>
+      const workerSource = `
+        const sendToFrame = self.postMessage.bind(self);
+        let output = '';
+        function print(value) {
+          let text;
+          try { text = typeof value === 'string' ? value : JSON.stringify(value); }
+          catch { text = String(value); }
+          output = (output + (output ? '\\n' : '') + String(text ?? 'undefined')).slice(0, 1800);
+        }
+        try { Object.defineProperty(self, 'indexedDB', { value: undefined, configurable: false, writable: false }); } catch {}
+        try { Object.defineProperty(self, 'fetch', { value: undefined, configurable: false, writable: false }); } catch {}
+        try { Object.defineProperty(self, 'importScripts', { value: undefined, configurable: false, writable: false }); } catch {}
+        try { Object.defineProperty(self, 'postMessage', { value: print, configurable: false, writable: false }); } catch {}
+        console.log = print;
+        console.info = print;
+        console.warn = print;
+        console.error = print;
+        function sameValue(actual, expected) {
+          try { return JSON.stringify(actual) === JSON.stringify(expected); }
+          catch { return false; }
+        }
+        self.onmessage = (event) => {
+          const { code, entryPoint, tests } = event.data;
+          const results = [];
+          try {
+            if (!/^[A-Za-z_$][\\w$]*$/.test(entryPoint)) throw new Error('함수 이름을 확인할 수 없습니다.');
+            const getFunction = new Function(code + '\\n; return typeof ' + entryPoint + ' === "function" ? ' + entryPoint + ' : null;');
+            const solution = getFunction();
+            if (typeof solution !== 'function') throw new Error(entryPoint + ' 함수를 찾지 못했습니다.');
+            for (const test of tests) {
+              const actual = solution(...test.input);
+              results.push({ passed: sameValue(actual, test.expected), actual, expected: test.expected });
+            }
+            sendToFrame({ type: 'finished', results, output });
+          } catch (error) {
+            sendToFrame({ type: 'finished', results, output, error: String(error && error.message || error).slice(0, 500) });
+          }
+        };
+      `;
+      const workerUrl = URL.createObjectURL(new Blob([workerSource], { type: 'text/javascript' }));
+      window.addEventListener('message', (event) => {
+        if (event.source !== parent || !event.data || event.data.type !== 'run') return;
+        const worker = new Worker(workerUrl);
+        worker.onmessage = (workerEvent) => {
+          if (workerEvent.data && workerEvent.data.type === 'finished') {
+            parent.postMessage({ type: 'study-web-result', requestId: event.data.requestId, result: workerEvent.data }, '*');
+            worker.terminate();
+            URL.revokeObjectURL(workerUrl);
+          }
+        };
+        worker.onerror = (workerError) => {
+          parent.postMessage({ type: 'study-web-result', requestId: event.data.requestId, result: { error: workerError.message || '실행 중 오류가 발생했습니다.', results: [] } }, '*');
+          worker.terminate();
+        };
+        worker.postMessage({ code: String(event.data.code).slice(0, 20000), entryPoint: event.data.entryPoint, tests: event.data.tests });
+      });
+    </script>
+  </body>
+</html>

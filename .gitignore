@@ -1,0 +1,17 @@
+/node_modules/
+/dist/
+/coverage/
+
+# Local credentials and machine-specific settings
+.env
+.env.*
+!.env.example
+
+# OMX runtime state is local execution data; keep the project plan in version control.
+/.omx/logs/
+/.omx/state/
+/.omx/ultragoal/
+
+# Temporary restore fixtures and exported learner records
+*.tmp.json
+study-web-progress-*.json

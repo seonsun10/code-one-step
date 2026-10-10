@@ -1,0 +1,16 @@
+{
+  "name": "study-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A no-cost, browser-first programming study site.",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/serve.mjs --dir dist",
+    "test": "node --test"
+  }
+}
