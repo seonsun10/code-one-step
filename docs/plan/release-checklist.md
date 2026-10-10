@@ -22,6 +22,24 @@ Cloudflare Pages Git 연동은 공개 저장소와 비공개 저장소를 지원
 - [GitHub Pages 이용 가능 저장소와 사이트 제한](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages)
 - [GitHub Pages 사용 제한 및 SaaS 적합성](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits)
 
+## 계정과 저장소가 준비된 뒤 실행할 배포 순서
+
+권장 경로는 비공개 소스 저장소에 자동 배포를 연결하고, 공개 Issues 저장소를 별도로 두는 방식이다. 정적 사이트로 빌드된 학습 콘텐츠는 모두 공개되며, 소스 저장소의 공개 여부와 무관하게 API·계정·DB 없이 동작한다.
+
+### Git 연동(자동 배포)
+
+1. 사용자가 GitHub 또는 GitLab에서 저장소 소유자와 공개 범위를 선택한다. 비공개 소스 + 공개 제보 저장소를 선택하면 제보 양식은 공개 저장소에 두고, 공개 Issues URL을 사이트에서 보이는 위치에 연결한다.
+2. 현재 로컬 `main` 커밋(`035999c`, `1f9a190`)을 선택한 원격 저장소에 연결하고 푸시한다. 이 단계는 원격 URL과 계정 인증이 제공된 뒤 진행한다.
+3. Cloudflare 대시보드에서 **Pages Git integration** 새 프로젝트를 만들고 해당 GitHub/GitLab 저장소와 production branch `main`을 연결한다.
+4. Build command는 `npm run build`, build output directory는 `dist`로 설정한다. 환경 변수, Functions, Workers API, DB binding, 유료 옵션은 추가하지 않는다.
+5. `*.pages.dev` 공개 URL에서 트랙 탐색, 문제 제출, 기록 재개, 백업/복원, `_headers` 보안 정책, 피드백 링크를 확인한다.
+
+### 직접 업로드(수동 배포)
+
+Git 원격 저장소 연결을 원하지 않으면 Pages 프로젝트를 **Direct Upload** 유형으로 생성하고 현재 `dist/`의 정적 파일을 업로드한다. 오늘 검증한 출력은 15개 파일, 최대 0.055 MiB로 대시보드 드래그 앤 드롭 한도보다 작다. 이 방식은 업데이트 때마다 새 `dist/`를 수동 업로드해야 하고, 같은 Pages 프로젝트를 Git 연동 방식으로 바꿀 수 없으므로 생성 전에 선택한다.
+
+피드백 저장소가 정해지기 전에는 앱에 Issues URL을 넣지 않는다. 현재 이슈 양식은 저장소에 있지만 공개 학습 화면에서 외부 제보 링크로 연결되어 있지는 않다. URL을 받으면 개인정보·백업 파일을 올리지 말라는 안내와 함께 링크를 추가하고 키보드로 접근 가능한지 확인한다.
+
 ## 피드백 경로
 
 출시 후보는 이메일을 받지 않는 GitHub Issues다. 이 저장소의 `.github/ISSUE_TEMPLATE/`에 학습 내용 오류와 접근성·사용성 문제 양식을 준비했다. 양식은 개인 정보나 학습 백업 파일을 올리지 않도록 안내한다. Issues를 쓰려면 공개 이슈 저장소와 GitHub 계정이 필요하다. 소스 저장소를 비공개로 유지하려면 이 양식을 별도 공개 피드백 저장소로 옮긴다. 사용자가 로그인 없이 제보할 경로는 아직 선택하지 않았다.
@@ -40,6 +58,7 @@ Cloudflare Pages Git 연동은 공개 저장소와 비공개 저장소를 지원
 - [x] 실제 `dist/` 산출물이 Pages 업로드 한도 안에 있고 서버 함수·환경 파일을 포함하지 않는지 검사한다(15개 파일, 최대 0.055 MiB, `_headers` 포함).
 - [x] 다섯 트랙의 23개 단원·세 단계 순서, 문제 풀이 데이터와 공식 버전 출처를 자동 검사한다.
 - [x] 기기 설정/밝게/어둡게 표시 선택, 테마 저장, 대비와 모바일 핵심 화면을 확인한다.
+- [ ] 선택한 공개 제보 저장소의 Issues URL을 학습 화면에 연결하고 접근성 안내를 확인한다.
 - [ ] 최초 공개 직전에 공식 기술 버전·호환 범위를 다시 확인하고 문서 검토일을 갱신한다.
 - [ ] 사용자가 GitHub/GitLab 저장소 소유자와 공개 범위를 정하고 저장소를 제공한다.
 - [ ] Pages 프로젝트를 만들기 전에 Git 연동 또는 직접 업로드 방식을 선택한다. 선택 후 같은 프로젝트에서 배포 방식 전환은 지원되지 않는다.
