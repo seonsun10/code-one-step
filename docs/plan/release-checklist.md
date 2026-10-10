@@ -10,7 +10,7 @@ Cloudflare 공식 문서의 현재 Pages 무료 한도는 동시 빌드 1개, �
 
 이 프로젝트는 앞으로 멤버십을 검토할 계획이 있다. 무료 Pages 후보는 지금의 광고·결제·서버 기능 없는 공개 교육용 초기에만 검토한다. 구독이나 상업 기능을 붙이기 전 Cloudflare 이용 조건과 서비스 적합성을 다시 확인하고 호스트 결정을 새로 기록한다.
 
-Cloudflare Pages Git 연동은 공개 저장소와 비공개 저장소를 지원하지만, Git 연동으로 만든 Pages 프로젝트는 나중에 Direct Upload 방식으로 바꿀 수 없다. 기본 경로는 Git 연동이며, 최초 Pages 프로젝트를 만들기 전에 방식을 확정한다. 직접 업로드를 선택하면 저장소 연결 없이 `dist/`를 수동으로 올릴 수 있지만, 업데이트도 직접 해야 한다. 현재 로컬 Git 저장소에는 아직 초기 커밋과 원격 주소가 없으며 Cloudflare 계정도 연결되지 않았다. 현재 빌드 출력은 GitHub Pages보다 Cloudflare Pages에 맞춘 `_headers` 보안 헤더를 포함한다.
+Cloudflare Pages Git 연동은 공개 저장소와 비공개 저장소를 지원하지만, Git 연동으로 만든 Pages 프로젝트는 나중에 Direct Upload 방식으로 바꿀 수 없다. 기본 경로는 Git 연동이며, 최초 Pages 프로젝트를 만들기 전에 방식을 확정한다. 직접 업로드를 선택하면 저장소 연결 없이 `dist/`를 수동으로 올릴 수 있지만, 업데이트도 직접 해야 한다. 로컬 Git 초기 커밋 `035999c`와 `.gitignore`는 준비됐지만 원격 주소와 Cloudflare 계정 연결은 아직 없다. 현재 빌드 출력은 GitHub Pages보다 Cloudflare Pages에 맞춘 `_headers` 보안 헤더를 포함한다.
 
 참고한 공식 자료:
 
