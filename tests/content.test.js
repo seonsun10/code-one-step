@@ -163,6 +163,15 @@ test('React state repair requires both preserving old fields and replacing the r
   assert.equal(gradeAnswer(exercise, 'profile.name = nextName; setProfile(profile);'), false);
 });
 
+test('teaching examples and distractor explanations match their stated conditions', () => {
+  const pythonRange = lessons.find((lesson) => lesson.id === 'py-conditions');
+  assert.match(pythonRange.example, /age >= 18 and age < 65/);
+  assert.match(pythonRange.exercise.prompt, /18 이상이고 65 미만/);
+
+  const reactClick = lessons.find((lesson) => lesson.id === 'react-events-state').exercise;
+  assert.match(reactClick.choiceExplanations.a, /클릭을 기다리지 않아요/);
+  assert.match(reactClick.choiceExplanations.a, /클릭 시 실행할 함수/);
+});
 test('version records match each track and link to official primary documentation', () => {
   const officialHosts = {
     javascript: ['262.ecma-international.org', 'ecma-international.org'],
@@ -173,7 +182,7 @@ test('version records match each track and link to official primary documentatio
   };
   const expectedVersions = {
     javascript: 'ECMAScript 2026',
-    python: 'Python 3.14.8',
+    python: 'Python 3.15.0',
     java: 'Java SE 25 LTS',
     spring: 'Spring Boot 4.1.1',
     react: 'React 19.3',
@@ -187,4 +196,9 @@ test('version records match each track and link to official primary documentatio
       assert.ok(officialHosts[track.id].includes(url.hostname), source.url);
     }
   }
+
+  const pythonSources = tracks.find((track) => track.id === 'python').contentReview.sources.map((source) => source.url);
+  assert.ok(pythonSources.includes('https://docs.python.org/3/'));
+  assert.ok(pythonSources.includes('https://docs.python.org/3/whatsnew/3.15.html'));
+  assert.ok(pythonSources.includes('https://www.python.org/downloads/release/python-3150/'));
 });

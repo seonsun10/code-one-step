@@ -60,7 +60,7 @@ export const curriculumAdditions = {
   javascript: {
     versionContext: 'ECMAScript 2026 (ECMA-262 17판, 2026년 6월 발행)의 공통 기초 문법; 브라우저 API는 별도 범위',
     version: 'ECMAScript 2026',
-    reviewedAt: '2026-10-09',
+    reviewedAt: '2026-10-10',
     sources: [
       { label: 'ECMAScript 2026 언어 명세 · ECMA-262 17판', url: 'https://262.ecma-international.org/17.0/' },
       { label: 'Ecma International 발행 정보', url: 'https://ecma-international.org/publications-and-standards/standards/ecma-262/' },
@@ -106,15 +106,16 @@ export const curriculumAdditions = {
     ],
   },
   python: {
-    versionContext: 'Python 3.14.8 안정 릴리스의 공통 기초 문법; 3.14 새 기능은 별도 버전 단원으로 구분',
-    version: 'Python 3.14.8',
-    reviewedAt: '2026-10-09',
+    versionContext: 'Python 3.15.0 안정판 기준의 공통 기초 문법; 새 기능은 공식 변경사항과 별도 버전 심화 단원에서 확인',
+    version: 'Python 3.15.0',
+    reviewedAt: '2026-10-10',
     sources: [
-      { label: 'Python 3.14.8 공식 문서', url: 'https://docs.python.org/3.14/' },
-      { label: 'Python 3.14.8 릴리스 정보', url: 'https://www.python.org/downloads/release/python-3148/' },
-      { label: 'Python 자습서: 제어 흐름과 함수', url: 'https://docs.python.org/3.14/tutorial/controlflow.html' },
-      { label: 'Python 자습서: 자료 구조와 리스트', url: 'https://docs.python.org/3.14/tutorial/datastructures.html' },
-      { label: 'Python 3.14 내장 함수', url: 'https://docs.python.org/3.14/library/functions.html' },
+      { label: 'Python 3.15.0 공식 문서', url: 'https://docs.python.org/3/' },
+      { label: 'Python 3.15 새 기능과 변경사항', url: 'https://docs.python.org/3/whatsnew/3.15.html' },
+      { label: 'Python 3.15.0 릴리스 정보', url: 'https://www.python.org/downloads/release/python-3150/' },
+      { label: 'Python 자습서: 제어 흐름과 함수', url: 'https://docs.python.org/3/tutorial/controlflow.html' },
+      { label: 'Python 자습서: 자료 구조와 리스트', url: 'https://docs.python.org/3/tutorial/datastructures.html' },
+      { label: 'Python 3.15 내장 함수', url: 'https://docs.python.org/3/library/functions.html' },
     ],
     lessonOrder: ['py-variables', 'py-conditions', 'py-loops', 'py-functions', 'py-lists'],
     topics: [
@@ -137,7 +138,7 @@ export const curriculumAdditions = {
       lesson('py-conditions', 'python-control', '조건문에 범위 쓰기', '7분', '두 비교 조건을 논리 연산자로 결합해 범위를 검사해요.',
         'Python의 `if`는 조건이 참일 때 들여쓴 블록을 실행합니다. 두 조건이 모두 참이어야 하는 경우 `and`로 연결할 수 있어요.',
         ['조건식 끝에는 콜론 `:`을 써요.', '`and`는 좌우 조건이 모두 참일 때 참이에요.', '블록의 들여쓰기는 실행 범위를 나타내요.'],
-        'age = 20\nif age >= 18 and age <= 64:\n    print("성인")',
+        'age = 20\nif age >= 18 and age < 65:\n    print("성인")',
         choice('py-conditions-choice', '두 조건을 모두 확인하기', '나이가 18 이상이고 65 미만인 경우에만 참이 되는 Python 조건은 무엇인가요?', [
           ['a', 'age >= 18 or age < 65'], ['b', 'age >= 18 and age < 65'], ['c', 'age > 18 and age >= 65'],
         ], 'b', '두 경계 조건이 모두 만족되어야 하므로 두 조건을 함께 묶어요.', '`and`로 `age >= 18`과 `age < 65`를 모두 확인하면 18 이상 65 미만의 범위가 됩니다.', {
@@ -170,7 +171,7 @@ export const curriculumAdditions = {
   java: {
     versionContext: 'Java SE 25 LTS 기준; 최신 명세 Java SE 27은 비-LTS이며 preview 기능은 기초 문제에서 제외',
     version: 'Java SE 25 LTS',
-    reviewedAt: '2026-10-09',
+    reviewedAt: '2026-10-10',
     sources: [
       { label: 'Java SE 25 언어 명세', url: 'https://docs.oracle.com/javase/specs/jls/se25/html/' },
       { label: 'Java SE 명세 버전과 preview 기능', url: 'https://docs.oracle.com/javase/specs/' },
@@ -233,7 +234,7 @@ export const curriculumAdditions = {
   spring: {
     versionContext: 'Spring Boot 4.1.1 stable / Spring Framework 7.0.9 이상; Java 17–26 지원, Java 27 호환은 문서에 없음',
     version: 'Spring Boot 4.1.1',
-    reviewedAt: '2026-10-09',
+    reviewedAt: '2026-10-10',
     sources: [
       { label: 'Spring Boot 4.1.1 시스템 요구 사항', url: 'https://docs.spring.io/spring-boot/system-requirements.html' },
       { label: 'Spring Boot 안정·미리보기 버전', url: 'https://docs.spring.io/spring-boot/spring-projects.html' },
@@ -287,7 +288,7 @@ export const curriculumAdditions = {
   react: {
     versionContext: 'React 19.3 공식 문서 기준 기초 문법; ViewTransition 등 19.3 추가 기능은 별도 버전 단원으로 구분',
     version: 'React 19.3',
-    reviewedAt: '2026-10-09',
+    reviewedAt: '2026-10-10',
     sources: [
       { label: 'React 버전', url: 'https://react.dev/versions' },
       { label: 'React 공식 학습: UI 설명하기', url: 'https://react.dev/learn/describing-the-ui' },
@@ -331,7 +332,7 @@ export const curriculumAdditions = {
         choice('react-events-state-choice', '클릭 처리기 전달', '버튼을 클릭했을 때 `count`를 1 늘리는 `onClick` 값은 무엇인가요?', [
           ['a', 'setCount(count + 1)'], ['b', '() => setCount(count + 1)'], ['c', 'count + 1'],
         ], 'b', '클릭이 발생할 때 실행되도록 함수 자체를 전달해야 해요.', '`onClick`에는 화살표 함수를 전달하고, 클릭 시 setter를 실행해요.', {
-          a: '렌더링 중 setter를 바로 호출할 수 있어요.',
+          a: '`setCount(count + 1)`는 JSX를 평가할 때 바로 실행돼 클릭을 기다리지 않아요. 클릭 시 실행할 함수를 전달해야 해요.',
           b: '클릭 이벤트가 발생할 때 실행할 함수를 전달해요.',
           c: '새 숫자만 전달할 뿐 상태를 갱신하는 함수 호출이 아니에요.',
         }), '입문'),

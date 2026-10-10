@@ -20,10 +20,11 @@ Node.js 18 이상이 설치된 환경에서 다음 명령을 사용할 수 있�
 npm run dev
 npm test
 npm run build
+npm run check:release
 npm run preview
 ```
 
-`npm run dev`는 `http://127.0.0.1:4173`에서 앱을 열고, `npm run build`는 정적 사이트를 `dist/`에 만듭니다. 빌드한 결과는 정적 호스팅에 올릴 수 있습니다.
+`npm run dev`는 `http://127.0.0.1:4173`에서 앱을 열고, `npm run build`는 정적 사이트를 `dist/`에 만듭니다. `npm run check:release`는 다시 빌드한 뒤 비밀 설정·개발 파일·서버 함수·학습 백업이 배포 파일에 포함되지 않았는지와 호스트 파일 한도를 검사합니다.
 
 ## 문서 안내
 
