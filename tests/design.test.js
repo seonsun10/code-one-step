@@ -15,6 +15,9 @@ test('primary Korean learning copy stays at least 14px', () => {
   const readableControls = styles.match(/\.page-content\s+:is\(([\s\S]*?)\)\s*\{\s*font-size:\s*max\(var\(--reading-min\),\s*1em\)/)?.[1];
   assert.ok(readableControls?.includes('.answer-textarea'), 'Short answers should use the readable text size');
   assert.ok(readableControls?.includes('.code-editor'), 'The code editor should use the readable text size');
+  for (const selector of ['.repair-criteria h2', '.repair-criteria h3', '.repair-criteria li', '.repair-test-table td']) {
+    assert.ok(readableControls?.includes(selector), `${selector} should use the readable text size`);
+  }
 });
 
 test('small screens use the fixed three-item mobile navigation', () => {
@@ -67,6 +70,16 @@ test('muted and feedback text tokens meet WCAG AA on their light surfaces', () =
   for (const [token, background] of pairs) {
     assert.ok(contrastRatio(tokenColor(token), hexColor(background)) >= 4.5, `${token} is too faint on ${background}`);
   }
+});
+
+test('repair criteria labels stay readable on their light and dark panels', () => {
+  const lightPanel = hexColor('#f8f9fb');
+  for (const textColor of ['#26364d', '#526078', '#556176', '#566377']) {
+    assert.ok(contrastRatio(hexColor(textColor), lightPanel) >= 4.5, `${textColor} is too faint on the repair criteria panel`);
+  }
+  const darkRoot = styles.match(/:root\[data-theme="dark"\]\s*\{([^}]+)\}/)?.[1];
+  const darkText = hexColor(darkRoot.match(/--text-muted:\s*(#[0-9a-f]{6})/i)[1]);
+  assert.ok(contrastRatio(darkText, hexColor('#222a36')) >= 4.5, 'Dark repair criteria text should meet WCAG AA');
 });
 
 test('dark appearance text tokens meet WCAG AA on their matching surfaces', () => {

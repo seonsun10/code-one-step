@@ -320,6 +320,21 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .answer-save-hint { color: #9ba4b0; font-size: 8px; }
 .coding-requirements { display: flex; gap: 8px; margin: -5px 0 16px; padding: 10px 11px; border: 1px solid #e8edf9; border-radius: 9px; color: #75829b; background: #f8f9fe; font-size: 9px; line-height: 1.6; }
 .requirements-icon { color: #7488d3; font-size: 13px; }
+.repair-criteria { margin: 0 0 16px; padding: 13px 14px; border: 1px solid #e8edf4; border-radius: 11px; color: #566377; background: #f8f9fb; font-size: 11px; line-height: 1.65; }
+.repair-criteria h2 { margin: 0 0 10px; color: #26364d; font-size: 13px; }
+.repair-criteria h3 { margin: 0 0 5px; color: #526078; font-size: 11px; }
+.repair-criteria-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.repair-criteria-grid ul { margin: 0; padding-left: 18px; }
+.repair-criteria-grid li + li { margin-top: 3px; }
+.repair-example-list { margin-top: 11px; }
+.repair-example { display: grid; grid-template-columns: 70px minmax(0, 1fr) 70px minmax(0, 1fr); gap: 7px; align-items: baseline; padding: 6px 0; border-top: 1px solid #e8edf4; }
+.repair-example span { color: #556176; }
+.repair-example code, .repair-test-table code { overflow-wrap: anywhere; color: inherit; font: 11px/1.6 'DM Mono', Consolas, monospace; }
+.repair-test-table { width: 100%; margin-top: 8px; border-collapse: collapse; text-align: left; }
+.repair-test-table caption { margin-bottom: 4px; color: #526078; font-weight: 700; text-align: left; }
+.repair-test-table th, .repair-test-table td { padding: 5px 7px; border-top: 1px solid #e8edf4; vertical-align: top; }
+.repair-test-table th { color: #556176; font-weight: 600; }
+.repair-grading-note { margin: 9px 0 0; color: #556176; font-size: 10px; }
 .answer-feedback { display: flex; align-items: flex-start; gap: 9px; margin-top: 14px; padding: 11px 12px; border: 1px solid transparent; border-radius: 10px; }
 .feedback-correct { border-color: #d9efe3; background: #eff9f3; }
 .feedback-review { border-color: #f0e5cb; background: #fffaf0; }
@@ -526,7 +541,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .track-progress-row, .track-hero-meta, .lesson-meta-row,
   .choice-text, .field-label, .field-hint, .answer-save-hint,
   .answer-textarea, .code-editor,
-  .coding-requirements, .answer-feedback strong,
+  .coding-requirements, .repair-criteria, .repair-criteria h2, .repair-criteria h3,
+  .repair-criteria li, .repair-example span, .repair-example code,
+  .repair-test-table, .repair-test-table caption, .repair-test-table th,
+  .repair-test-table td, .repair-grading-note, .answer-feedback strong,
   .side-goal-card h2, .stat-caption, .stat-foot
 ) { font-size: max(var(--reading-min), 1em); }
 
@@ -762,6 +780,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 :root[data-theme="dark"] .daily-question,
 :root[data-theme="dark"] .lesson-tip,
 :root[data-theme="dark"] .coding-requirements,
+:root[data-theme="dark"] .repair-criteria,
 :root[data-theme="dark"] .button-secondary,
 :root[data-theme="dark"] .button-outline,
 :root[data-theme="dark"] .lesson-nav-empty,
@@ -788,6 +807,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .lesson-navigation strong, .content-source p, .content-source a, .lesson-action-card > p,
   .lesson-action-details span, .saved-small, .question-type-pill, .exercise-step,
   .exercise-progress-label, .exercise-prompt, .choice-text, .field-label, .field-hint,
+  .repair-criteria, .repair-criteria h2, .repair-criteria h3, .repair-criteria li,
+  .repair-example span, .repair-example code, .repair-test-table, .repair-test-table caption,
+  .repair-test-table th, .repair-test-table td, .repair-grading-note,
   .answer-save-hint, .coding-requirements, .hint-disclosure summary, .hint-disclosure > p,
   .solution-disclosure summary, .solution-card > p, .side-goal-card h2, .side-goal-card > a,
   .side-privacy-note p, .stat-caption, .stat-foot, .empty-state p,
@@ -843,4 +865,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .theme-control > span { display: none; }
   .theme-control select { min-height: 40px; }
   .resume-card { min-height: 0; }
+  .repair-criteria-grid { grid-template-columns: 1fr; gap: 10px; }
+  .repair-example { grid-template-columns: 60px minmax(0, 1fr) 70px minmax(0, 1fr); }
 }

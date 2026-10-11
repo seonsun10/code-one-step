@@ -131,10 +131,9 @@ test('every question has a usable prompt, hint, explanation, and a verifiable an
 
     if (exercise.type === 'repair-code') {
       assert.ok(exercise.starterCode.length > 0, exercise.id);
-      assert.ok(exercise.requiredFragments.length > 0, exercise.id);
-      assert.ok(exercise.requiredFragments.every((part) => part.length > 0), exercise.id);
+      assert.ok(exercise.solutionPatterns?.length > 0, exercise.id);
+      for (const pattern of exercise.solutionPatterns) assert.doesNotThrow(() => new RegExp(pattern), exercise.id);
       assert.equal(gradeAnswer(exercise, exercise.starterCode), false, exercise.id);
-      assert.equal(gradeAnswer(exercise, exercise.requiredFragments.join('\n')), true, exercise.id);
     }
   }
 });
@@ -158,9 +157,43 @@ test('array and list boundary-error exercises include their data and identify th
 
 test('React state repair requires both preserving old fields and replacing the requested field', () => {
   const exercise = lessons.find((lesson) => lesson.id === 'react-state').exercise;
-  assert.equal(gradeAnswer(exercise, 'setProfile({ ...profile, name: nextName });'), true);
+  assert.equal(gradeAnswer(exercise, 'function rename(nextName) { setProfile({ ...profile, name: nextName }); }'), true);
+  assert.equal(gradeAnswer(exercise, 'function rename(nextName) { setProfile({...profile,name:nextName}); }'), true);
   assert.equal(gradeAnswer(exercise, 'setProfile({ ...profile });'), false);
   assert.equal(gradeAnswer(exercise, 'profile.name = nextName; setProfile(profile);'), false);
+});
+
+test('repair questions show complete acceptance criteria and accept equivalent formatting', () => {
+  const repairs = lessons.filter((lesson) => lesson.exercise.type === 'repair-code');
+  const accepted = new Map([
+    ['js-function-repair', 'function double(value) {\n  return value*2;\n}'],
+    ['py-function-repair', 'def double(value):\n  return value*2'],
+    ['java-method-repair', 'static int add(int left, int right) { return right+left; }'],
+    ['react-state-repair', 'function rename(nextName) { setProfile({...profile,name:nextName}); }'],
+  ]);
+  const rejected = new Map([
+    ['js-function-repair', 'function double(value) {\n  value*2;\n}'],
+    ['py-function-repair', 'def double(value):\n  value*2'],
+    ['java-method-repair', 'static int add(int left, int right) { return left-right; }'],
+    ['react-state-repair', 'profile.name=nextName; setProfile(profile);'],
+  ]);
+
+  assert.equal(repairs.length, accepted.size);
+  for (const lesson of repairs) {
+    const exercise = lesson.exercise;
+    const track = tracks.find((item) => item.id === lesson.trackId);
+    assert.equal(exercise.language, track.title, exercise.id);
+    assert.ok(exercise.acceptanceCriteria.requirements.length > 0, exercise.id);
+    assert.ok(exercise.acceptanceCriteria.constraints.length > 0, exercise.id);
+    assert.ok(exercise.acceptanceCriteria.examples.every((item) => item.input && item.output), exercise.id);
+    assert.ok(exercise.acceptanceCriteria.tests.every((item) => item.input && item.expected), exercise.id);
+    assert.ok(exercise.gradingNote.length > 15, exercise.id);
+    assert.equal(gradeAnswer(exercise, accepted.get(exercise.id)), true, exercise.id);
+    assert.equal(gradeAnswer(exercise, rejected.get(exercise.id)), false, exercise.id);
+    assert.equal(gradeAnswer(exercise, exercise.starterCode), false, exercise.id);
+  }
+  const javascriptRepair = repairs.find((lesson) => lesson.exercise.id === 'js-function-repair').exercise;
+  assert.equal(gradeAnswer(javascriptRepair, 'function double(value) { return value*2 }'), true);
 });
 
 test('teaching examples and distractor explanations match their stated conditions', () => {

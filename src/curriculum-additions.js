@@ -20,16 +20,15 @@ const shortAnswer = (id, title, prompt, acceptedAnswers, hint, explanation) => (
   explanation,
 });
 
-const repair = (id, title, prompt, starterCode, requiredFragments, forbiddenFragments, hint, explanation) => ({
+const repair = (id, title, prompt, starterCode, hint, explanation, options) => ({
   id,
   type: 'repair-code',
   title,
   prompt,
   starterCode,
-  requiredFragments,
-  forbiddenFragments,
   hint,
   explanation,
+  ...options,
 });
 
 const locate = (id, title, prompt, codeLines, answerLines, hint, explanation) => ({
@@ -98,9 +97,22 @@ export const curriculumAdditions = {
         ['매개변수 이름은 함수 안에서 입력값을 가리켜요.', '`return`은 함수 실행을 끝내고 값을 호출한 쪽으로 돌려줘요.', '함수 호출 결과를 변수에 저장하거나 다른 계산에 사용할 수 있어요.'],
         'function double(value) {\n  return value * 2;\n}\n\nconst result = double(4);',
         repair('js-function-repair', '계산 결과를 반환하기', '함수가 두 배 값을 호출한 쪽으로 돌려주도록 코드를 수정하세요.',
-          'function double(value) {\n  value * 2;\n}', ['return value * 2;'], ['\n  value * 2;'],
+          'function double(value) {\n  value * 2;\n}',
           '계산식 앞에 결과를 돌려주는 키워드가 필요해요.',
-          '`return value * 2;`로 계산 결과를 반환하면 `double(4)`의 값은 8이 됩니다.'),
+          '`return value * 2;`로 계산 결과를 반환하면 `double(4)`의 값은 8이 됩니다.', {
+            language: 'JavaScript',
+            solutionPatterns: [
+              String.raw`^[ \t]*function[ \t]+double[ \t]*\([ \t]*value[ \t]*\)[ \t]*\{[ \t\r\n]*return[ \t]+value[ \t\r\n]*\*[ \t\r\n]*2[ \t]*;?[ \t\r\n]*\}[ \t]*$`,
+              String.raw`^[ \t]*function[ \t]+double[ \t]*\([ \t]*value[ \t]*\)[ \t]*\{[ \t\r\n]*return[ \t]+2[ \t\r\n]*\*[ \t\r\n]*value[ \t]*;?[ \t\r\n]*\}[ \t]*$`,
+            ],
+            acceptanceCriteria: {
+              requirements: ['`double(value)`가 입력값의 두 배를 반환해요.'],
+              constraints: ['계산 결과를 `console.log`로 출력하는 대신 함수 결과로 돌려줘요.'],
+              examples: [{ input: 'double(4)', output: '8' }],
+              tests: [{ input: 'double(0)', expected: '0' }, { input: 'double(-3)', expected: '-6' }],
+            },
+            gradingNote: '실행형 채점은 아니며, 함수 선언과 반환 문장만 있는 형태를 확인해요. 공백·줄바꿈과 선택 세미콜론은 허용합니다.',
+          }),
         '기초',
       ),
     ],
@@ -161,9 +173,24 @@ export const curriculumAdditions = {
         ['`def` 뒤에 함수 이름과 매개변수를 적어요.', '함수 본문은 들여써요.', '`return` 다음의 값이 함수 호출의 결과가 돼요.'],
         'def double(value):\n    return value * 2\n\nresult = double(4)',
         repair('py-function-repair', '함수 결과 반환하기', '`double(4)`가 숫자 8을 돌려주도록 함수 본문을 고치세요.',
-          'def double(value):\n    value * 2', ['return value * 2'], ['\n    value * 2'],
+          'def double(value):\n    value * 2',
           '계산식 앞에 결과를 반환하는 문장을 넣어 보세요.',
-          '`return value * 2`는 계산값을 호출한 쪽에 돌려줘요. 반환이 없으면 Python 함수는 기본적으로 `None`을 돌려줍니다.'),
+          '`return value * 2`는 계산값을 호출한 쪽에 돌려줘요. 반환이 없으면 Python 함수는 기본적으로 `None`을 돌려줍니다.', {
+            language: 'Python',
+            solutionPatterns: [
+              String.raw`^[ \t]*def[ \t]+double[ \t]*\([ \t]*value[ \t]*\)[ \t]*:[ \t]*\r?\n(?:[ \t]*\r?\n)*[ \t]+return[ \t]+(?:value[ \t]*\*[ \t]*2|2[ \t]*\*[ \t]*value)[ \t]*;?[ \t]*$`,
+              String.raw`^[ \t]*def[ \t]+double[ \t]*\([ \t]*value[ \t]*\)[ \t]*:[ \t]+return[ \t]+(?:value[ \t]*\*[ \t]*2|2[ \t]*\*[ \t]*value)[ \t]*;?[ \t]*$`,
+              String.raw`^[ \t]*def[ \t]+double[ \t]*\([ \t]*value[ \t]*\)[ \t]*:[ \t]*\r?\n(?:[ \t]*\r?\n)*[ \t]+return[ \t]*\([ \t\r\n]*(?:value[ \t\r\n]*\*[ \t\r\n]*2|2[ \t\r\n]*\*[ \t\r\n]*value)[ \t\r\n]*\)[ \t]*$`,
+              String.raw`^[ \t]*def[ \t]+double[ \t]*\([ \t]*value[ \t]*\)[ \t]*:[ \t]+return[ \t]*\([ \t\r\n]*(?:value[ \t\r\n]*\*[ \t\r\n]*2|2[ \t\r\n]*\*[ \t\r\n]*value)[ \t\r\n]*\)[ \t]*$`,
+            ],
+            acceptanceCriteria: {
+              requirements: ['`double(value)`가 입력값의 두 배를 반환해요.'],
+              constraints: ['값을 출력하지 말고 함수 결과로 반환해요.'],
+              examples: [{ input: 'double(4)', output: '8' }],
+              tests: [{ input: 'double(0)', expected: '0' }, { input: 'double(-3)', expected: '-6' }],
+            },
+            gradingNote: '실행형 채점은 아니며, 함수 선언과 들여쓴 반환 문장 구조를 확인해요. 반환 위치를 바꿀 수는 없습니다.',
+          }),
         '기초',
       ),
     ],
@@ -212,9 +239,21 @@ export const curriculumAdditions = {
         ['매개변수는 호출할 때 전달하는 입력을 받아요.', '`return`은 결과를 호출한 쪽으로 돌려줘요.', '반환형과 반환하는 값의 자료형이 맞아야 해요.'],
         'static int add(int left, int right) {\n    return left + right;\n}',
         repair('java-method-repair', '두 수의 합 반환하기', '두 정수의 합을 돌려주는 `add` 메서드가 되도록 연산자를 고치세요.',
-          'static int add(int left, int right) {\n    return left - right;\n}', ['return left + right;'], ['return left - right;'],
+          'static int add(int left, int right) {\n    return left - right;\n}',
           '`return` 뒤의 산술 연산자가 요구와 같은지 확인해 보세요.',
-          '덧셈 연산자 `+`로 매개변수를 더해야 두 값의 합을 반환합니다.'),
+          '덧셈 연산자 `+`로 매개변수를 더해야 두 값의 합을 반환합니다.', {
+            language: 'Java',
+            solutionPatterns: [
+              String.raw`^[ \t]*(?:public[ \t]+)?static[ \t]+int[ \t]+add[ \t]*\([ \t]*int[ \t]+left[ \t]*,[ \t]*int[ \t]+right[ \t]*\)[ \t]*\{[ \t\r\n]*return[ \t\r\n]+(?:left[ \t\r\n]*\+[ \t\r\n]*right|right[ \t\r\n]*\+[ \t\r\n]*left)[ \t]*;[ \t\r\n]*\}[ \t]*$`,
+            ],
+            acceptanceCriteria: {
+              requirements: ['`add(left, right)`가 두 정수의 합을 반환해요.'],
+              constraints: ['반환형 `int`를 유지하고 두 입력값을 모두 더해요.'],
+              examples: [{ input: 'add(2, 3)', output: '5' }],
+              tests: [{ input: 'add(0, 0)', expected: '0' }, { input: 'add(-4, 7)', expected: '3' }],
+            },
+            gradingNote: '실행형 채점은 아니며, 메서드 본문이 합을 반환하는 구조를 확인해요. 덧셈 피연산자 순서는 바꿔도 됩니다.',
+          }),
         '기초',
       ),
       lesson('java-classes', 'java-methods-objects', '객체를 생성자로 초기화하기', '8분', '생성자가 새 객체의 초기 상태를 정하는 역할을 설명해요.',

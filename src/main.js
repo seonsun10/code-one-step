@@ -303,6 +303,23 @@ function codeBlock(code, label = 'CODE') {
   return `<div class="code-block"><div class="code-block-bar"><span class="code-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>${escapeHtml(label)}</span><button type="button" class="copy-code-button" data-copy-code="${escapeHtml(code)}">복사</button></div><pre><code>${escapeHtml(code)}</code></pre></div>`;
 }
 
+function repairCriteria(exercise) {
+  const criteria = exercise.acceptanceCriteria;
+  if (exercise.type !== 'repair-code' || !criteria) return '';
+
+  const list = (items) => `<ul>${items.map((item) => `<li>${inlineText(item)}</li>`).join('')}</ul>`;
+  const examples = criteria.examples.map((example) => `<div class="repair-example"><span>입력</span><code>${escapeHtml(example.input)}</code><span>기대 결과</span><code>${escapeHtml(example.output)}</code></div>`).join('');
+  const tests = criteria.tests.map((test) => `<tr><td><code>${escapeHtml(test.input)}</code></td><td><code>${escapeHtml(test.expected)}</code></td></tr>`).join('');
+
+  return `<section class="repair-criteria" aria-labelledby="repair-criteria-heading">
+    <h2 id="repair-criteria-heading">수정 기준</h2>
+    <div class="repair-criteria-grid"><div><h3>요구사항</h3>${list(criteria.requirements)}</div><div><h3>제약</h3>${list(criteria.constraints)}</div></div>
+    <div class="repair-example-list"><h3>입출력 예시</h3>${examples}</div>
+    <table class="repair-test-table"><caption>추가 확인 사례</caption><thead><tr><th scope="col">입력</th><th scope="col">기대 결과</th></tr></thead><tbody>${tests}</tbody></table>
+    <p class="repair-grading-note">${escapeHtml(exercise.gradingNote)}</p>
+  </section>`;
+}
+
 function exerciseForm(exercise) {
   const draft = progress.drafts[exercise.id];
   if (exercise.type === 'choice') {
@@ -320,8 +337,9 @@ function exerciseForm(exercise) {
   }
   if (exercise.type === 'repair-code' || exercise.type === 'coding') {
     const value = typeof draft === 'string' ? draft : exercise.starterCode;
-    const label = exercise.type === 'coding' ? 'JavaScript' : 'React / JavaScript';
-    return `<div class="editor-heading"><label class="field-label" for="code-answer">${exercise.type === 'coding' ? '함수 코드를 작성하세요' : '코드를 수정하세요'}</label><span class="editor-language"><i aria-hidden="true"></i>${label}</span></div><textarea class="code-editor" id="code-answer" name="code-answer" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" maxlength="20000" data-draft-id="${exercise.id}" aria-label="${exercise.type === 'coding' ? 'JavaScript 문제 코드 편집기' : '코드 수정 편집기'}">${escapeHtml(value)}</textarea>${exercise.type === 'coding' ? '<p class="field-hint">코드는 이 브라우저에서 실행하고 1.8초 후 종료해요. 완전한 보안 샌드박스는 아니므로 민감한 코드나 정보는 붙여 넣지 마세요.</p>' : '<p class="field-hint">필요한 부분을 직접 수정한 뒤 확인해 보세요.</p>'}`;
+    const label = exercise.language ?? (exercise.type === 'coding' ? 'JavaScript' : '코드');
+    const inputLabel = exercise.type === 'coding' ? 'JavaScript 문제 코드 편집기' : `${label} 코드 수정 편집기`;
+    return `<div class="editor-heading"><label class="field-label" for="code-answer">${exercise.type === 'coding' ? '함수 코드를 작성하세요' : '코드를 수정하세요'}</label><span class="editor-language"><i aria-hidden="true"></i>${escapeHtml(label)}</span></div><textarea class="code-editor" id="code-answer" name="code-answer" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" maxlength="20000" data-draft-id="${exercise.id}" aria-label="${escapeHtml(inputLabel)}">${escapeHtml(value)}</textarea>${exercise.type === 'coding' ? '<p class="field-hint">코드는 이 브라우저에서 실행하고 1.8초 후 종료해요. 완전한 보안 샌드박스는 아니므로 민감한 코드나 정보는 붙여 넣지 마세요.</p>' : '<p class="field-hint">수정 기준과 추가 확인 사례를 보고 필요한 부분을 바꿔 보세요.</p>'}`;
   }
   return '';
 }
@@ -355,6 +373,7 @@ function exercisePage(lessonId) {
       <section class="exercise-card"><div class="exercise-card-top"><span class="exercise-step">연습 <strong>${String(lesson.number).padStart(2, '0')}</strong></span><span class="exercise-progress-label">학습 목표에 맞춰 풀어 보세요</span></div>
         <p class="exercise-prompt">${inlineText(exercise.prompt)}</p>
         ${exercise.type === 'coding' ? '<div class="coding-requirements"><span class="requirements-icon" aria-hidden="true">↳</span><span>입력은 숫자 배열, 반환값은 배열 안의 모든 숫자의 합이에요.</span></div>' : ''}
+        ${repairCriteria(exercise)}
         <form id="answer-form" data-exercise-form="${exercise.type}">${exerciseForm(exercise)}
           <div class="answer-actions"><button class="button button-primary" type="submit" data-submit-answer>${exercise.type === 'coding' ? '코드 실행하고 확인' : '답 확인하기'} <span aria-hidden="true">→</span></button><span class="answer-save-hint">답과 진도는 이 기기에 저장됩니다.</span>${exercise.type === 'coding' ? '<span class="runner-status" data-runner-status role="status" aria-live="polite"></span>' : ''}</div>
         </form>

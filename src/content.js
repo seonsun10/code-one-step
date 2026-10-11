@@ -123,6 +123,7 @@ export const tracks = [
           type: 'short-answer',
           title: '평균을 어떻게 구할까요?',
           prompt: '`scores`가 비어 있지 않은 숫자 리스트일 때 평균을 계산하는 Python 표현식을 적어 보세요.',
+          answerNormalization: 'python-expression',
           acceptedAnswers: [
             'sum(scores) / len(scores)',
             'sum(scores)/len(scores)',
@@ -263,9 +264,21 @@ export const tracks = [
           type: 'repair-code',
           title: '상태 업데이트를 수정하세요',
           prompt: '아래 코드는 상태 객체를 직접 바꿉니다. 두 문장을 기존 필드를 보존한 새 객체를 전달하는 한 문장으로 바꾸세요.',
+          language: 'React',
+          solutionPatterns: [
+            String.raw`^[ \t]*function[ \t]+rename[ \t]*\([ \t]*nextName[ \t]*\)[ \t]*\{[ \t\r\n]*setProfile[ \t\r\n]*\([ \t\r\n]*\{[ \t\r\n]*\.\.\.[ \t\r\n]*profile[ \t\r\n]*,[ \t\r\n]*name[ \t\r\n]*:[ \t\r\n]*nextName[ \t\r\n]*\}[ \t\r\n]*\)[ \t]*;?[ \t\r\n]*\}[ \t]*$`,
+          ],
           starterCode: 'function rename(nextName) {\n  profile.name = nextName;\n  setProfile(profile);\n}',
-          requiredFragments: ['setProfile({ ...profile, name: nextName });'],
-          forbiddenFragments: ['profile.name ='],
+          acceptanceCriteria: {
+            requirements: ['기존 `profile` 필드를 모두 보존해요.', '`name`만 `nextName`으로 바꾼 새 객체를 setter에 전달해요.'],
+            constraints: ['기존 상태 객체를 직접 수정하지 않아요.', '두 문장을 한 번의 `setProfile` 호출로 바꿔요.'],
+            examples: [{ input: "profile={name:'Mina', role:'editor'}, nextName='Jin'", output: "새 상태={name:'Jin', role:'editor'}; 기존 상태는 유지" }],
+            tests: [
+              { input: "profile={name:'Mina', role:'editor'}, nextName='Jin'", expected: "새 객체의 name은 'Jin', role은 'editor'; 기존 profile은 변경되지 않음" },
+              { input: "profile={name:'Sol', theme:'dark'}, nextName='Ara'", expected: "새 객체의 name은 'Ara', theme은 'dark'; 기존 profile은 변경되지 않음" },
+            ],
+          },
+          gradingNote: '실행형 채점은 아니며, 함수에서 새 객체를 한 번 전달하는 구조를 확인해요. 공백·줄바꿈과 선택 세미콜론은 허용합니다.',
           hint: '기존 객체를 복사하고 `name` 값만 덮어쓰는 새 객체를 만들어 보세요.',
           explanation:
             '`setProfile({ ...profile, name: nextName })`는 기존 필드를 복사한 새로운 객체를 전달합니다. React가 새 참조를 확인하고 화면을 갱신할 수 있어요.',
