@@ -1,6 +1,6 @@
 # 프로젝트 진척 관리
 
-최종 갱신: 2026-10-10 (Asia/Seoul)
+최종 갱신: 2026-10-11 (Asia/Seoul)
 
 ## 요약
 
@@ -68,6 +68,7 @@ G9은 사용자 요청으로 추가한 로컬 제품 범위이며 기존 G1–G8
 | 2026-10-10 | G5/G7/G8 실행기 경로별 CSP 및 공개 응답 검증 | `.html` 주소의 308 뒤 최종 확장자 없는 주소에 CSP가 없던 오류를 수정; Cloudflare Pages 배포 `c07c5e9` 성공 확인; `curl.exe -I -L`의 최종 200 및 직접 clean URL의 200 모두 전체 실행기 CSP와 `connect-src 'none'` 응답; Cloudflare 공식 헤더·경로 규칙과 대조 | E-24 해결, 라이브 응답 확인 |
 | 2026-10-10 | G7 CSP 배포 감사와 G9 Python 고정 출처 최종 검증 | CSP를 앱의 네 정확한 경로로 한정; 실행기 두 경로에서 8개 지시자의 정확한 출처 집합을 강제하고 중복·예상 밖 지시자와 패턴 경로를 거부; CSP 약화·겹침 회귀 사례 추가; Python 3.15.0 공식 문서·What's New·자습서·내장 함수 링크를 버전 고정 `/3.15/`로 교체; 독립 코드 리뷰 APPROVE 및 아키텍처 리뷰 CLEAR; `npm test` 47/47, `npm run check:release` 통과(15개 파일, 최대 0.055 MiB), `npm ls --depth=0` 빈 목록, `git diff --check` 통과 | E-25/E-26 해결, G5/G7/G9 로컬 검증 완료; 후속 커밋 배포 확인 예정 |
 | 2026-10-10 | 최종 보안·버전 변경 배포 확인 | 커밋 `c98da08`이 `origin/main`과 일치하고 Cloudflare Pages 배포 ID `10010bdf-6130-4a5b-b322-a3bbfedfad73`가 `success`; 공개 `.html` 요청의 308 뒤 200 및 clean URL 직접 200 양쪽에 전체 실행기 CSP와 `connect-src 'none'`, `worker-src blob:` 확인; 배포 커밋에서 `npm test` 47/47, `npm run check:release` 통과(15개 파일, 최대 0.055 MiB), `npm ls --depth=0` 빈 목록, 독립 아키텍처 리뷰 CLEAR·코드 리뷰 APPROVE | 후속 배포 확인 완료, G5/G7/G8/G9 근거 최신화 |
+| 2026-10-11 | 공개 사이트 재점검·최신 버전 감사 | 브라우저에서 Python 경로→1단계 주제→변수 단원→객관식 연습으로 이동해 단계·목표·예제·문제·힌트/풀이 UI를 확인(정답 제출은 하지 않아 저장 기록은 변경하지 않음); 다크 테마에서 `color-scheme: dark`, 어두운 배경/밝은 글자 적용을 확인하고 테마를 `기기 설정`으로 복원; 320·390·1280px 화면에서 가로 넘침 없음, 콘솔 오류 0; Python 3.15.0, ECMAScript 2026/ECMA-262 17판, Java 25 LTS/27 비-LTS, Spring Boot 4.1.1·Framework 7.0.9·Java 17–26, React 19.3을 각 공식 문서([Python](https://www.python.org/downloads/release/python-3150/), [ECMA-262](https://ecma-international.org/publications-and-standards/standards/ecma-262/), [Java](https://www.oracle.com/java/technologies/java-se-support-roadmap.html), [Spring Boot](https://docs.spring.io/spring-boot/system-requirements.html), [React](https://react.dev/versions))와 대조해 현재 표기 오류 없음; `npm test` 47/47, `npm run check:release` 통과(15개 파일, 최대 0.055 MiB), `npm ls --depth=0` 빈 목록, 공개 홈·실행기 경로 200/CSP 확인 | 제품 진척 100% 유지; 브라우저 상호작용 근거 최신화, OMX 체크포인트는 E-02 |
 
 ## 상태 규칙
 
