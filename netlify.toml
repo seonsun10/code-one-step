@@ -1,0 +1,8 @@
+# Publish only the production build. Serving the repository root exposes
+# unbundled browser modules (for example CodeMirror imports), preventing boot.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
