@@ -1,12 +1,21 @@
-const routePages = new Set(['home', 'tracks', 'track', 'topic', 'lesson', 'exercise', 'profile']);
+const routePages = new Set(['home', 'tracks', 'track', 'topic', 'lesson', 'exercise', 'profile', 'coding', 'foundations']);
 
 export function routeFromHash(hash = globalThis.location?.hash ?? '') {
-  const [requestedPage = 'home', encodedId = ''] = String(hash ?? '').replace(/^#\/?/, '').split('/');
-  let id = '';
-  try {
-    id = decodeURIComponent(encodedId);
-  } catch {
-    // A malformed fragment should resolve to the page's empty/not-found state.
+  const [requestedPage = 'home', ...encodedSegments] = String(hash ?? '').replace(/^#\/?/, '').split('/');
+  const segments = encodedSegments.map((segment) => {
+    try {
+      return decodeURIComponent(segment);
+    } catch {
+      return '';
+    }
+  });
+  const id = segments[0] ?? '';
+  if (requestedPage === 'coding' && id === 'problem') {
+    return { page: 'coding-problem', id: segments[1] ?? '' };
   }
-  return { page: routePages.has(requestedPage) ? requestedPage : 'home', id };
+  if (requestedPage === 'coding') {
+    return { page: 'coding', id };
+  }
+  if (!routePages.has(requestedPage)) return { page: 'home', id: '' };
+  return { page: requestedPage, id };
 }

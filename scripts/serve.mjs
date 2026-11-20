@@ -9,9 +9,12 @@ const serveRoot = resolve(dirFlag >= 0 ? process.argv[dirFlag + 1] ?? 'dist' : p
 const mimeTypes = new Map([
   ['.html', 'text/html; charset=utf-8'],
   ['.js', 'text/javascript; charset=utf-8'],
+  ['.mjs', 'text/javascript; charset=utf-8'],
   ['.css', 'text/css; charset=utf-8'],
   ['.svg', 'image/svg+xml'],
   ['.json', 'application/json; charset=utf-8'],
+  ['.wasm', 'application/wasm'],
+  ['.data', 'application/octet-stream'],
 ]);
 
 if (!serveRoot.startsWith(`${projectRoot}${sep}`) && serveRoot !== projectRoot) {
@@ -48,7 +51,7 @@ const server = createServer((request, response) => {
   const runnerPage = filePath.endsWith(`${sep}public${sep}runner-frame.html`);
   const contentSecurityPolicy = runnerPage
     ? "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' blob:; worker-src blob:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
-    : "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'";
+    : "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'";
   response.writeHead(200, {
     'Content-Type': mimeTypes.get(extname(filePath).toLowerCase()) ?? 'application/octet-stream',
     'Content-Security-Policy': contentSecurityPolicy,

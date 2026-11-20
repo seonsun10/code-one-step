@@ -2,6 +2,14 @@ function normalizeAnswer(value) {
   return String(value ?? '').trim().toLocaleLowerCase('ko-KR').replace(/\s+/g, ' ');
 }
 
+function normalizeExactOutput(value) {
+  return String(value ?? '').replace(/\r\n?/g, '\n').trim();
+}
+
+function normalizeCaseSensitive(value) {
+  return String(value ?? '').trim().replace(/\s+/g, ' ');
+}
+
 function normalizePythonExpression(value) {
   return String(value ?? '').replace(/\s+/g, '');
 }
@@ -87,9 +95,18 @@ export function gradeAnswer(exercise, response) {
     case 'choice':
       return String(response ?? '') === exercise.answer;
     case 'short-answer':
-      return exercise.acceptedAnswers.some((answer) => exercise.answerNormalization === 'python-expression'
-        ? normalizePythonExpression(response) === normalizePythonExpression(answer)
-        : normalizeAnswer(response) === normalizeAnswer(answer));
+      return exercise.acceptedAnswers.some((answer) => {
+        if (exercise.answerNormalization === 'python-expression') {
+          return normalizePythonExpression(response) === normalizePythonExpression(answer);
+        }
+        if (exercise.answerNormalization === 'exact-output') {
+          return normalizeExactOutput(response) === normalizeExactOutput(answer);
+        }
+        if (exercise.answerNormalization === 'case-sensitive') {
+          return normalizeCaseSensitive(response) === normalizeCaseSensitive(answer);
+        }
+        return normalizeAnswer(response) === normalizeAnswer(answer);
+      });
     case 'locate-error': {
       const selected = Array.isArray(response) ? [...response].sort((a, b) => a - b) : [];
       const correct = [...exercise.answerLines].sort((a, b) => a - b);

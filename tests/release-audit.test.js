@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
@@ -162,6 +163,107 @@ test('release audit rejects CSP policies that permit external script sources', a
     const result = await auditRelease({ projectRoot });
     assert.equal(result.ok, false);
     assert.ok(result.violations.some((issue) => issue.includes('external or unsupported script-src source')));
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
+test('release audit rejects externally hosted stylesheets', async () => {
+  const projectRoot = await makeProject();
+  try {
+    const headersPath = join(projectRoot, 'dist', '_headers');
+    const headers = await readFile(headersPath, 'utf8');
+    await writeFile(headersPath, headers.replace(
+      "default-src 'self'; connect-src 'self'",
+      "default-src 'self'; style-src 'self' https://cdn.example.test; connect-src 'self'",
+    ));
+
+    const result = await auditRelease({ projectRoot });
+    assert.ok(result.violations.some((issue) => issue.includes('external or unsupported style-src source')));
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
+test('release audit requires bundled editor MIT notices when CodeMirror is declared', async () => {
+  const projectRoot = await makeProject();
+  try {
+    await writeFile(join(projectRoot, 'package.json'), JSON.stringify({
+      devDependencies: { '@codemirror/view': '6.43.14' },
+    }));
+
+    const missingNotices = await auditRelease({ projectRoot });
+    assert.ok(missingNotices.violations.some((issue) => issue.includes('THIRD_PARTY_LICENSES.txt')));
+
+    await writeFile(join(projectRoot, 'dist', 'THIRD_PARTY_LICENSES.txt'), [
+      '## @codemirror/view@6.43.14 (MIT)',
+      '',
+      'MIT License',
+    ].join('\n'));
+    const includedNotices = await auditRelease({ projectRoot });
+    assert.equal(includedNotices.ok, true);
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
+test('release audit requires the TypeScript worker and Apache license notice when TypeScript is bundled', async () => {
+  const projectRoot = await makeProject();
+  try {
+    await writeFile(join(projectRoot, 'package.json'), JSON.stringify({ devDependencies: { typescript: '6.0.3' } }));
+    const missingAssets = await auditRelease({ projectRoot });
+    assert.ok(missingAssets.violations.some((issue) => issue.includes('compiler worker')));
+    assert.ok(missingAssets.violations.some((issue) => issue.includes('THIRD_PARTY_LICENSES.txt')));
+
+    await mkdir(join(projectRoot, 'dist', 'src'));
+    await writeFile(join(projectRoot, 'dist', 'src', 'typescript-compiler.worker.js'), 'self.onmessage = () => {};');
+    await writeFile(join(projectRoot, 'dist', 'THIRD_PARTY_LICENSES.txt'), '## typescript@6.0.3 (Apache-2.0)\nApache License');
+    const includedAssets = await auditRelease({ projectRoot });
+    assert.equal(includedAssets.ok, true);
+  } finally {
+    await rm(projectRoot, { recursive: true, force: true });
+  }
+});
+
+test('release audit requires pinned local FastAPI runtime assets, wheel hashes, and notices', async () => {
+  const projectRoot = await makeProject();
+  try {
+    await writeFile(join(projectRoot, 'package.json'), JSON.stringify({ devDependencies: { pyodide: '314.0.7' } }));
+    const missingAssets = await auditRelease({ projectRoot });
+    assert.ok(missingAssets.violations.some((issue) => issue.includes('FastAPI/Pyodide runner')));
+    assert.ok(missingAssets.violations.some((issue) => issue.includes('runtime manifest')));
+
+    const runtimeRoot = join(projectRoot, 'dist', 'public', 'runtime', 'pyodide');
+    await mkdir(runtimeRoot, { recursive: true });
+    await mkdir(join(projectRoot, 'dist', 'src'), { recursive: true });
+    await writeFile(join(projectRoot, 'dist', 'src', 'fastapi-runner.worker.js'), 'self.onmessage = () => {};');
+    for (const file of ['pyodide.mjs', 'pyodide.asm.mjs', 'pyodide.asm.wasm', 'python_stdlib.zip']) {
+      await writeFile(join(runtimeRoot, file), 'local runtime');
+    }
+    const wheelName = 'fastapi-0.143.0-py3-none-any.whl';
+    const wheelBytes = 'official wheel bytes';
+    const wheelHash = createHash('sha256').update(wheelBytes).digest('hex');
+    await writeFile(join(runtimeRoot, wheelName), wheelBytes);
+    await writeFile(join(runtimeRoot, 'runtime-manifest.json'), JSON.stringify({
+      pyodide: '314.0.7',
+      python: '3.14.2',
+      fastapi: '0.143.0',
+      asgiLifespan: '2.1.0',
+      wheels: [{ file: wheelName, sha256: wheelHash }],
+    }));
+    await writeFile(join(projectRoot, 'dist', 'THIRD_PARTY_LICENSES.txt'), [
+      'Pyodide JavaScript runtime',
+      '## fastapi 0.143.0',
+      '## asgi-lifespan 2.1.0',
+      'opentelemetry-api',
+    ].join('\n'));
+
+    const validAssets = await auditRelease({ projectRoot });
+    assert.equal(validAssets.ok, true, validAssets.violations.join('\n'));
+
+    await writeFile(join(runtimeRoot, wheelName), 'changed wheel bytes');
+    const mismatchedWheel = await auditRelease({ projectRoot });
+    assert.ok(mismatchedWheel.violations.some((issue) => issue.includes('SHA-256')));
   } finally {
     await rm(projectRoot, { recursive: true, force: true });
   }

@@ -1,4 +1,58 @@
 import { curriculumAdditions } from './curriculum-additions.js';
+import { javaExpansion } from './curriculum-expansion-java.js';
+import { javascriptExpansion, javascriptCourseExpansion } from './curriculum-expansion-javascript.js';
+import { pythonExpansion } from './curriculum-expansion-python.js';
+import { reactExpansion, springExpansion } from './curriculum-expansion-frameworks.js';
+import { pythonCourseExpansion } from './curriculum-weeks-python.js';
+import { javaCourseExpansion } from './curriculum-weeks-java.js';
+import { springCourseExpansion } from './curriculum-weeks-spring.js';
+import { reactCourseExpansion } from './curriculum-weeks-react.js';
+import { typescriptCourseExpansion } from './curriculum-weeks-typescript.js';
+import { postgresqlCourseExpansion } from './curriculum-weeks-postgresql.js';
+import { fastapiCourseExpansion } from './curriculum-weeks-fastapi.js';
+import { nextjsCourseExpansion } from './curriculum-weeks-nextjs.js';
+import { kotlinCourseExpansion } from './curriculum-weeks-kotlin.js';
+import { csharpCourseExpansion } from './curriculum-weeks-csharp.js';
+import { aiCourseExpansion } from './curriculum-weeks-ai.js';
+import { codingProblems } from './coding-problems.js';
+import { toCodingExercise } from './coding-problem-adapter.js';
+import { foundationsTrack } from './foundations.js';
+
+const codingProblemById = new Map(codingProblems.map((problem) => [problem.id, problem]));
+
+function toLessonCodingExercise(problem) {
+  return toCodingExercise(problem);
+}
+
+const curriculumExpansions = {
+  javascript: javascriptExpansion,
+  python: pythonExpansion,
+  java: javaExpansion,
+  spring: springExpansion,
+  react: reactExpansion,
+  typescript: { lessons: [], extraExercises: {} },
+  postgresql: { lessons: [], extraExercises: {} },
+  fastapi: { lessons: [], extraExercises: {} },
+  nextjs: { lessons: [], extraExercises: {} },
+  kotlin: { lessons: [], extraExercises: {} },
+  csharp: { lessons: [], extraExercises: {} },
+  ai: { lessons: [], extraExercises: {} },
+};
+
+const weeklyCourseExpansions = {
+  javascript: javascriptCourseExpansion,
+  python: pythonCourseExpansion,
+  java: javaCourseExpansion,
+  spring: springCourseExpansion,
+  react: reactCourseExpansion,
+  typescript: typescriptCourseExpansion,
+  postgresql: postgresqlCourseExpansion,
+  fastapi: fastapiCourseExpansion,
+  nextjs: nextjsCourseExpansion,
+  kotlin: kotlinCourseExpansion,
+  csharp: csharpCourseExpansion,
+  ai: aiCourseExpansion,
+};
 
 export const exerciseTypes = new Set([
   'choice',
@@ -12,13 +66,12 @@ export const tracks = [
   {
     id: 'javascript',
     title: 'JavaScript',
-    short: 'JS',
     category: '프로그래밍 언어',
     level: '처음부터',
     tone: 'yellow',
     accent: '#f2b847',
-    description: '변수부터 조건, 반복, 함수와 배열까지 익혀요.',
-    objective: '조건과 반복부터 함수와 배열까지 JavaScript 기초를 단계별로 익혀요.',
+    description: '기본문법에서 비동기, 브라우저 API, 테스트와 실전 설계까지 익혀요.',
+    objective: '값과 제어 흐름부터 비동기 처리, 테스트, 실전 문제 설계까지 순서대로 익혀요.',
     prerequisites: ['없음 — 처음 시작해도 따라올 수 있어요.'],
     lessons: [
       {
@@ -35,7 +88,7 @@ export const tracks = [
           '`let`은 다시 할당할 수 있지만 같은 블록에서 같은 이름을 또 선언할 수는 없어요.',
           '기본값은 `const`로 두고, 실제로 다시 할당해야 할 때 `let`을 사용하면 의도가 분명해져요.',
         ],
-        example: 'const course = "JavaScript";\nlet lessonsDone = 0;\nlessonsDone = lessonsDone + 1;',
+        example: 'const course = "JavaScript";\nlet lessonsDone = 0;\nlessonsDone = lessonsDone + 1;\nconsole.log(course + ": " + lessonsDone); // JavaScript: 1',
         exercise: {
           id: 'js-variables-choice',
           type: 'choice',
@@ -71,36 +124,20 @@ export const tracks = [
           '`reduce`는 여러 값을 하나의 결과로 모을 때 쓸 수 있어요.',
           '함수가 결과를 돌려줘야 테스트 코드가 값을 비교할 수 있어요.',
         ],
-        example: 'const total = [2, 3, 4].reduce((sum, value) => sum + value, 0);',
-        exercise: {
-          id: 'js-sum-coding',
-          type: 'coding',
-          title: '숫자 배열의 합 구하기',
-          prompt: '숫자가 담긴 배열을 받아 모든 숫자의 합을 반환하는 `sumNumbers` 함수를 작성하세요. 빈 배열의 합은 0입니다.',
-          entryPoint: 'sumNumbers',
-          starterCode: 'function sumNumbers(numbers) {\n  // 배열에 담긴 모든 숫자를 더해 반환하세요.\n  return 0;\n}',
-          tests: [
-            { input: [[2, 3, 4]], expected: 9 },
-            { input: [[-1, 6]], expected: 5 },
-            { input: [[]], expected: 0 },
-          ],
-          hint: '`reduce`의 두 번째 인자로 시작값 0을 전달할 수 있어요.',
-          explanation:
-            '각 숫자를 누적값에 더하고, 누적의 시작값을 0으로 두면 빈 배열도 자연스럽게 처리할 수 있어요. 예를 들면 `numbers.reduce((sum, number) => sum + number, 0)`입니다.',
-        },
+        example: 'const scores = [2, 3, 4];\nconst total = scores.reduce(\n  (sum, value) => sum + value,\n  0\n);\nconsole.log(total); // 9',
+        exercise: toLessonCodingExercise(codingProblemById.get('js-sum-coding')),
       },
     ],
   },
   {
     id: 'python',
     title: 'Python',
-    short: 'Py',
     category: '프로그래밍 언어',
     level: '처음부터',
     tone: 'blue',
     accent: '#6387e8',
-    description: '조건과 반복부터 함수와 리스트까지 익혀요.',
-    objective: '조건과 반복을 익히고 함수로 리스트 데이터를 처리해요.',
+    description: '기본문법과 자료구조부터 파일, 타입, 비동기 데이터 처리까지 배워요.',
+    objective: '조건·함수·자료구조를 쌓아 파일, 타입, 비동기 작업과 실전 데이터 문제를 다뤄요.',
     prerequisites: ['없음 — 처음 시작해도 따라올 수 있어요.'],
     lessons: [
       {
@@ -138,13 +175,12 @@ export const tracks = [
   {
     id: 'java',
     title: 'Java',
-    short: 'Jv',
     category: '프로그래밍 언어',
     level: '기초',
     tone: 'coral',
     accent: '#ec846a',
-    description: '자료형과 제어 흐름부터 메서드와 객체까지 배워요.',
-    objective: '타입과 제어 흐름을 익히고 메서드와 객체로 코드를 구성해요.',
+    description: '자료형과 객체부터 컬렉션, 동시성, JVM 성능과 알고리즘까지 다뤄요.',
+    objective: 'Java 기본형과 객체를 시작으로 자료 모델, 동시성, 측정 기반 성능 개선까지 배워요.',
     prerequisites: ['없음 — 처음 시작해도 따라올 수 있어요.'],
     lessons: [
       {
@@ -183,15 +219,26 @@ export const tracks = [
     ],
   },
   {
+    id: 'fastapi',
+    title: 'FastAPI',
+    category: 'Python 웹 프레임워크',
+    level: 'Python 다음 단계',
+    tone: 'cyan',
+    accent: '#009688',
+    description: '경로와 검증부터 의존성, 테스트, 운영 경계까지 익혀요.',
+    objective: 'Python 기초 위에서 FastAPI 요청·응답, 검증, 구조화, 테스트와 실전 API 설계를 단계별로 배워요.',
+    prerequisites: ['Python 변수·조건·함수·딕셔너리·타입 힌트 기초', 'HTTP 요청과 JSON의 기초'],
+    lessons: [],
+  },
+  {
     id: 'spring',
     title: 'Spring Boot',
-    short: 'Sp',
     category: '프레임워크',
     level: '입문',
     tone: 'green',
     accent: '#51a77b',
-    description: '의존성 주입, HTTP 요청, 서비스 역할을 단계별로 익혀요.',
-    objective: '의존성 주입부터 웹 요청 처리와 입력 검증까지 살펴봐요.',
+    description: '웹 요청에서 검증, 트랜잭션, 보안, 운영 품질까지 살펴봐요.',
+    objective: 'Spring Boot 객체 연결부터 API 설계, 데이터 경계, 보안, 복원력과 운영 준비까지 익혀요.',
     prerequisites: ['Java 클래스와 생성자 기초'],
     lessons: [
       {
@@ -202,7 +249,7 @@ export const tracks = [
         duration: '9분',
         objective: 'Spring이 객체 사이의 의존성을 연결하는 이유를 설명해요.',
         intro:
-          '서비스가 다른 객체를 직접 만들면 생성과 교체가 서로 얽힐 수 있어요. Spring은 필요한 객체를 컨테이너에서 관리하고 생성자 등을 통해 전달할 수 있습니다.',
+          '이 과정의 Spring 코드는 사이트에서 직접 실행하지 않고 흐름을 읽으며 연습해요. 서비스가 필요한 객체를 직접 만들면 생성과 교체가 서로 얽힐 수 있어요. Spring은 객체를 관리하고 생성자 등을 통해 필요한 객체를 전달해요.',
         points: [
           '의존성 주입은 객체가 사용할 협력 객체를 바깥에서 전달하는 방식이에요.',
           '생성자 주입은 필수 의존성을 객체 생성 시점에 분명하게 보여 줘요.',
@@ -235,13 +282,12 @@ export const tracks = [
   {
     id: 'react',
     title: 'React',
-    short: 'Re',
     category: '프레임워크',
     level: '입문',
     tone: 'cyan',
     accent: '#46aebc',
-    description: '컴포넌트와 props부터 이벤트와 상태 업데이트까지 익혀요.',
-    objective: '컴포넌트와 props부터 이벤트와 상태 업데이트까지 익혀요.',
+    description: '컴포넌트와 상태부터 비동기 데이터, 접근성, 테스트와 실전 화면 설계까지 배워요.',
+    objective: 'React 기본 화면과 상태에서 Hook, 데이터 요청, 접근성·테스트를 거쳐 작은 앱을 설계해요.',
     prerequisites: ['JavaScript 함수와 객체 기초'],
     lessons: [
       {
@@ -286,33 +332,217 @@ export const tracks = [
       },
     ],
   },
+  {
+    id: 'nextjs',
+    title: 'Next.js',
+    category: '프레임워크',
+    level: 'React 다음 단계',
+    tone: 'slate',
+    accent: '#111111',
+    description: 'App Router와 렌더링 경계부터 데이터, 보안, 테스트, 정적 배포까지 코드 읽기로 배워요.',
+    objective: 'Next.js의 화면·요청·배포 경계를 배우고 실제 실행 지원과 개념 연습을 구분해요.',
+    prerequisites: ['JavaScript 함수·객체·비동기 기초', 'React 컴포넌트·props·state 기초'],
+    lessons: [],
+  },
+  {
+    id: 'kotlin',
+    title: 'Kotlin · Android',
+    category: '프로그래밍 언어 · 모바일 앱',
+    level: '처음부터',
+    tone: 'violet',
+    accent: '#7F52FF',
+    description: 'Kotlin 기초부터 코루틴, Android 수명 주기와 Compose 앱 설계까지 코드 읽기로 배워요.',
+    objective: 'Kotlin 문법·타입·비동기 흐름을 익히고 Android 17 앱의 상태·데이터·접근성 구조를 31주 동안 설계해요.',
+    prerequisites: ['없음 — 처음 시작해도 1주차부터 따라올 수 있어요.'],
+    lessons: [],
+  },
+  {
+    id: 'csharp',
+    title: 'C# · .NET',
+    category: '프로그래밍 언어 · 개발 플랫폼',
+    level: '처음부터',
+    tone: 'violet',
+    accent: '#68217A',
+    description: 'C# 기초부터 .NET 앱 구성과 ASP.NET Core 설계까지 코드 읽기로 배워요.',
+    objective: 'C# 문법·객체·비동기 흐름부터 .NET 10 서비스 설계까지 35주 동안 단계적으로 익혀요.',
+    prerequisites: ['없음 — 처음 시작해도 1주차부터 따라올 수 있어요.'],
+    lessons: [],
+  },
+  {
+    id: 'typescript',
+    title: 'TypeScript',
+    category: '프로그래밍 언어',
+    level: 'JavaScript 다음 단계',
+    tone: 'cyan',
+    accent: '#3178C6',
+    description: 'JavaScript 기초 위에 타입 추론, 유니온, 제네릭, 데이터 경계와 실전 설계를 더해요.',
+    objective: 'JavaScript에서 출발해 객체·유니온·제네릭과 타입 안전한 애플리케이션 경계를 26주 동안 익혀요.',
+    prerequisites: ['JavaScript 변수·조건·함수·배열 기초'],
+    lessons: [],
+  },
+  {
+    id: 'postgresql',
+    title: 'SQL · PostgreSQL',
+    category: '데이터베이스',
+    level: '처음부터',
+    tone: 'blue',
+    accent: '#336791',
+    description: '기본 조회부터 조인·집계·트랜잭션까지 배워요. 실습은 초기화되는 브라우저 DB에서 해요.',
+    objective: 'SQL 결과 집합 모델을 익히고 PostgreSQL 질의를 39주 동안 입문부터 실전까지 차근차근 연습해요.',
+    prerequisites: ['없음 — 처음 시작해도 따라올 수 있어요.'],
+    lessons: [],
+  },
+  {
+    id: 'ai',
+    title: 'AI · LLM 기초와 활용',
+    category: '인공지능',
+    level: '처음부터',
+    tone: 'violet',
+    accent: '#6958C7',
+    description: 'AI의 작동 원리부터 LLM 활용, 결과 확인과 안전한 적용까지 배워요.',
+    objective: 'AI·머신러닝의 기초를 익히고 LLM을 알맞게 활용하며 결과를 검증하는 방법을 배워요.',
+    prerequisites: ['없음 — 코딩이나 AI 도구 계정 없이 시작할 수 있어요.'],
+    lessons: [],
+  },
 ];
 
 for (const track of tracks) {
   const progression = curriculumAdditions[track.id];
+  const expansion = curriculumExpansions[track.id];
+  const course = weeklyCourseExpansions[track.id];
   if (!progression) throw new Error(`Missing reviewed curriculum for ${track.id}`);
+  if (!expansion) throw new Error(`Missing learning expansion for ${track.id}`);
+  if (!course) throw new Error(`Missing weekly curriculum for ${track.id}`);
 
-  const lessonById = new Map([...track.lessons, ...progression.lessons].map((item) => [item.id, item]));
-  track.lessons = progression.lessonOrder.map((id) => lessonById.get(id));
+  const lessonById = new Map([...track.lessons, ...progression.lessons, ...expansion.lessons, ...course.lessons].map((item) => [item.id, item]));
+  track.lessons = course.lessonOrder.map((id) => lessonById.get(id));
   if (track.lessons.some((item) => !item) || track.lessons.length !== lessonById.size) {
     throw new Error(`Curriculum sequence does not match lessons for ${track.id}`);
   }
-  track.topics = progression.topics;
+  const phasesById = new Map(course.phases.map((phase, index) => [phase.id, {
+    ...phase,
+    stage: phase.stage ?? index + 1,
+    lessonIds: [],
+  }]));
+  for (const [lessonId, week] of Object.entries(course.existingWeeks)) {
+    const phase = phasesById.get(week.phaseId);
+    if (!phase) throw new Error(`Missing phase for ${track.id}/${lessonId}`);
+    phase.lessonIds.push(lessonId);
+  }
+  for (const item of course.lessons) {
+    const phase = phasesById.get(item.topicId);
+    if (!phase) throw new Error(`Missing phase for ${track.id}/${item.id}`);
+    phase.lessonIds.push(item.id);
+  }
+  track.topics = [...phasesById.values()];
+  const reviewedWeeks = course.reviewedWeeks ?? [];
+  const weeks = Math.max(26, course.lessonOrder.length, ...reviewedWeeks);
+  track.course = {
+    weeks,
+    sessions: weeks * 5,
+    questions: weeks * 15,
+    phases: course.phases.length,
+    contentStatus: reviewedWeeks.length === weeks ? '문항 검수 완료' : '문항 검수 진행 중',
+    reviewedWeeks,
+  };
   track.contentReview = {
-    status: '검수 완료',
+    status: '기술 버전·출처 확인 완료',
     reviewedAt: progression.reviewedAt,
     version: progression.version,
     versionContext: progression.versionContext,
     sources: progression.sources,
   };
+  track.practiceMode = progression.practiceMode ?? null;
+  track.practiceUnit = progression.practiceUnit ?? '문제';
+  const topicByLesson = new Map(track.topics.flatMap((topic) => topic.lessonIds.map((id) => [id, topic])));
   track.lessons.forEach((item, index) => {
-    const topic = track.topics.find((candidate) => candidate.id === item.topicId);
-    if (!topic) throw new Error(`Missing topic for ${track.id}/${item.id}: ${item.topicId}`);
+    const legacyWeek = course.existingWeeks[item.id];
+    if (legacyWeek) item.topicId = legacyWeek.phaseId;
+    const topic = topicByLesson.get(item.id);
+    if (!topic) throw new Error(`Missing topic for ${track.id}/${item.id}`);
+    item.topicId = topic.id;
     item.number = index + 1;
     item.stage = topic.stage;
+    item.difficulty ??= ['입문', '기초', '중급', '고급', '실전', '실전'][topic.stage - 1];
+    if (!Array.isArray(item.exercises)) {
+      item.exercises = [item.exercise, ...(expansion.extraExercises[item.id] ?? [])].filter(Boolean);
+      delete item.exercise;
+    }
+    if (legacyWeek) {
+      if (item.exercises.length !== 3 || legacyWeek.sessions.length !== 5) {
+        throw new Error(`Legacy week must preserve its three original questions and add five sessions: ${track.id}/${item.id}`);
+      }
+      if (legacyWeek.title) item.title = legacyWeek.title;
+      if (legacyWeek.objective) item.objective = legacyWeek.objective;
+      if (legacyWeek.intro) item.intro = legacyWeek.intro;
+      if (legacyWeek.example) item.example = legacyWeek.example;
+      if (legacyWeek.points) item.points = legacyWeek.points;
+      item.week = legacyWeek.week;
+      const legacyExerciseDays = legacyWeek.legacyExerciseDays ?? item.exercises.map((_, exerciseIndex) => exerciseIndex + 1);
+      if (legacyExerciseDays.length !== item.exercises.length || legacyExerciseDays.some((day) => !Number.isInteger(day) || day < 1 || day > legacyWeek.sessions.length)) {
+        throw new Error(`Legacy question schedule must map each question to one study day: ${track.id}/${item.id}`);
+      }
+      item.sessions = legacyWeek.sessions.map((session) => {
+        const legacyExercises = item.exercises.flatMap((exercise, exerciseIndex) => (
+          legacyExerciseDays[exerciseIndex] === session.number ? [{ ...exercise, studyDay: session.number }] : []
+        ));
+        return {
+          ...session,
+          exercises: [...legacyExercises, ...session.exercises.map((exercise) => ({ ...exercise, studyDay: session.number }))],
+        };
+      });
+      item.studyDays = item.sessions;
+      item.exercises = item.sessions.flatMap((session) => session.exercises);
+    } else {
+      item.week ??= index + 1;
+      item.sessions ??= item.studyDays;
+      item.studyDays = item.sessions.map((session) => ({
+        ...session,
+        exercises: session.exercises.map((exercise) => ({ ...exercise, studyDay: session.number })),
+      }));
+      item.sessions = item.studyDays;
+      item.exercises = item.studyDays.flatMap((session) => session.exercises);
+      if (item.studyDays?.length !== 5 || item.studyDays.some((session) => session.exercises.length !== 3)) {
+        throw new Error(`New weekly lesson must have five sessions with three questions each: ${track.id}/${item.id}`);
+      }
+    }
+    if (item.exercises.length !== 15 || new Set(item.exercises.map((exercise) => exercise.id)).size !== 15) {
+      throw new Error(`Weekly lesson must have fifteen unique questions: ${track.id}/${item.id}`);
+    }
     item.referenceVersion = progression.version;
-    item.reviewedAt = progression.reviewedAt;
+    item.versionReviewedAt = progression.reviewedAt;
+    item.contentReviewStatus = track.course.reviewedWeeks.includes(item.week) ? '문항 검수 완료' : '문항 검수 진행 중';
+    item.exercises.forEach((exercise) => {
+      if (exercise.language) exercise.language = track.title;
+    });
     item.prerequisiteLessonIds = index ? [track.lessons[index - 1].id] : [];
+  });
+
+  const choices = track.lessons.flatMap((item) => item.exercises).filter((exercise) => exercise.type === 'choice');
+  const stableWeight = (value) => {
+    let hash = 2166136261;
+    for (const character of value) {
+      hash ^= character.codePointAt(0);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0;
+  };
+  const stableOrder = [...choices].sort((left, right) =>
+    stableWeight(`${track.id}:${left.id}`) - stableWeight(`${track.id}:${right.id}`)
+      || (left.id < right.id ? -1 : left.id > right.id ? 1 : 0),
+  );
+  // Change display order only; stable option IDs keep saved answers and drafts meaningful.
+  const nextAnswerPositionByChoiceCount = new Map();
+  stableOrder.forEach((exercise) => {
+    const answerIndex = exercise.choices.findIndex((option) => option.id === exercise.answer);
+    if (answerIndex < 0 || exercise.choices.length < 2) return;
+    const count = exercise.choices.length;
+    const index = nextAnswerPositionByChoiceCount.get(count) ?? 0;
+    const targetIndex = index % count;
+    nextAnswerPositionByChoiceCount.set(count, index + 1);
+    if (answerIndex === targetIndex) return;
+    const [answerOption] = exercise.choices.splice(answerIndex, 1);
+    exercise.choices.splice(targetIndex, 0, answerOption);
   });
 }
 
@@ -320,20 +550,59 @@ export const lessons = tracks.flatMap((track) =>
   track.lessons.map((lesson, index) => ({ ...lesson, trackId: track.id, trackTitle: track.title, number: index + 1 })),
 );
 
+const exerciseIds = lessons.flatMap((lesson) => lesson.exercises.map((exercise) => exercise.id));
+if (new Set(exerciseIds).size !== exerciseIds.length) {
+  throw new Error('Exercise ids must be unique across the full curriculum');
+}
+
+const allLessons = [...lessons, ...foundationsTrack.lessons];
+const exerciseById = new Map();
+const lessonByExerciseId = new Map();
+const legacyExerciseIdAliases = new Map();
+for (const lesson of allLessons) {
+  for (const exercise of lesson.exercises) {
+    exerciseById.set(exercise.id, exercise);
+    lessonByExerciseId.set(exercise.id, lesson);
+    for (const legacyId of exercise.legacyIds ?? []) {
+      if (exerciseById.has(legacyId) && legacyId !== exercise.id) {
+        throw new Error('Legacy exercise id conflicts with a current exercise: ' + legacyId);
+      }
+      const existingAlias = legacyExerciseIdAliases.get(legacyId);
+      if (existingAlias && existingAlias !== exercise.id) {
+        throw new Error('Legacy exercise id maps to multiple current exercises: ' + legacyId);
+      }
+      legacyExerciseIdAliases.set(legacyId, exercise.id);
+    }
+  }
+}
+for (const legacyId of legacyExerciseIdAliases.keys()) {
+  if (exerciseById.has(legacyId)) {
+    throw new Error('Legacy exercise id conflicts with a current exercise: ' + legacyId);
+  }
+}
+
+export function getCurrentExerciseId(exerciseId) {
+  return legacyExerciseIdAliases.get(exerciseId) ?? exerciseId;
+}
+
 export function getTrack(trackId) {
-  return tracks.find((track) => track.id === trackId) ?? null;
+  return trackId === foundationsTrack.id ? foundationsTrack : tracks.find((track) => track.id === trackId) ?? null;
 }
 
 export function getLesson(lessonId) {
-  return lessons.find((lesson) => lesson.id === lessonId) ?? null;
+  return [...lessons, ...foundationsTrack.lessons].find((lesson) => lesson.id === lessonId) ?? null;
+}
+
+export function getExercise(exerciseId) {
+  return exerciseById.get(getCurrentExerciseId(exerciseId)) ?? null;
 }
 
 export function findLessonForExercise(exerciseId) {
-  return lessons.find((lesson) => lesson.exercise.id === exerciseId) ?? null;
+  return lessonByExerciseId.get(getCurrentExerciseId(exerciseId)) ?? null;
 }
 
 export function getTopic(topicId) {
-  for (const track of tracks) {
+  for (const track of [...tracks, foundationsTrack]) {
     const topic = track.topics.find((item) => item.id === topicId);
     if (topic) {
       return {

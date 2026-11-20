@@ -14,7 +14,7 @@ function applyInitialTheme() {
     ? (systemTheme?.matches ? 'dark' : 'light')
     : themePreference;
   document.documentElement.dataset.theme = theme;
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#151a22' : '#f6f7f9');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#171d27' : '#f2efe8');
 }
 
 applyInitialTheme();

@@ -9,59 +9,181 @@
     <script>
       const workerSource = `
         const sendToFrame = self.postMessage.bind(self);
+        const nativeArrayIsArray = Array.isArray.bind(Array);
+        const nativeGetPrototypeOf = Object.getPrototypeOf.bind(Object);
+        const nativeKeys = Object.keys.bind(Object);
+        const nativeGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor.bind(Object);
+        const nativeGetOwnPropertySymbols = Object.getOwnPropertySymbols.bind(Object);
+        const nativeDefineProperty = Object.defineProperty.bind(Object);
+        const nativeNumberIsFinite = Number.isFinite.bind(Number);
+        const nativeJsonStringify = JSON.stringify.bind(JSON);
+        const nativeString = String.bind(globalThis);
+        const nativeHasOwn = Function.call.bind(Object.prototype.hasOwnProperty);
+        const nativeCreate = Object.create.bind(Object);
+        const nativeSort = Function.call.bind(Array.prototype.sort);
+        const nativeWeakSet = WeakSet;
+        const nativeWeakSetHas = Function.call.bind(WeakSet.prototype.has);
+        const nativeWeakSetAdd = Function.call.bind(WeakSet.prototype.add);
+        const nativeWeakSetDelete = Function.call.bind(WeakSet.prototype.delete);
+        const nativeReflectApply = Reflect.apply.bind(Reflect);
+        const MAX_VALUE_DEPTH = 10;
+        const MAX_VALUE_NODES = 1000;
+        const MAX_VALUE_TEXT = 1800;
+        const MAX_OUTPUT_TEXT = 1800;
         let output = '';
-        function print(value) {
-          let text;
-          try { text = typeof value === 'string' ? value : JSON.stringify(value); }
-          catch { text = String(value); }
-          output = (output + (output ? '\\n' : '') + String(text ?? 'undefined')).slice(0, 1800);
+        let outputSize = 0;
+        let currentTestOutput = '';
+        let outputWasTruncated = false;
+        function formatConsoleValue(value) {
+          if (typeof value === 'string') return value;
+          try { return nativeJsonStringify(value); }
+          catch { return nativeString(value); }
+        }
+        function print(...values) {
+          const formatted = [];
+          for (const value of values) formatted[formatted.length] = formatConsoleValue(value);
+          const text = formatted.join(' ');
+          const separator = output ? '\\n' : '';
+          const available = Math.max(0, MAX_OUTPUT_TEXT - outputSize - separator.length);
+          const clipped = text.slice(0, available);
+          if (clipped.length < text.length) outputWasTruncated = true;
+          if (clipped) {
+            output += separator + clipped;
+            currentTestOutput += (currentTestOutput ? '\\n' : '') + clipped;
+            outputSize += separator.length + clipped.length;
+          }
+        }
+        function makeSafeValue(value, depth = 0, visited = new nativeWeakSet(), counter = { nodes: 0 }) {
+          counter.nodes += 1;
+          if (counter.nodes > MAX_VALUE_NODES || depth > MAX_VALUE_DEPTH) throw new Error('반환값이 너무 복잡해 표시할 수 없습니다.');
+          if (value === null || typeof value === 'boolean') return value;
+          if (typeof value === 'string') {
+            if (value.length > MAX_VALUE_TEXT) throw new Error('문자열 결과가 표시 제한보다 깁니다.');
+            return value;
+          }
+          if (typeof value === 'number') {
+            if (!nativeNumberIsFinite(value)) throw new Error('반환값에는 유한한 숫자만 사용할 수 있습니다.');
+            return value;
+          }
+          if (typeof value !== 'object' || value === undefined) throw new Error('반환값은 문자열, 숫자, 불리언, 배열 또는 일반 객체여야 합니다.');
+          if (nativeWeakSetHas(visited, value)) throw new Error('순환 참조가 있는 반환값은 비교할 수 없습니다.');
+          nativeWeakSetAdd(visited, value);
+
+          if (nativeArrayIsArray(value)) {
+            if (value.length > 100) throw new Error('배열 결과가 100개 항목을 넘었습니다.');
+            const copy = [];
+            for (let index = 0; index < value.length; index += 1) {
+              const descriptor = nativeGetOwnPropertyDescriptor(value, nativeString(index));
+              if (!descriptor || !nativeHasOwn(descriptor, 'value')) throw new Error('배열 결과에는 일반 값만 사용할 수 있습니다.');
+              copy[copy.length] = makeSafeValue(descriptor.value, depth + 1, visited, counter);
+            }
+            nativeWeakSetDelete(visited, value);
+            return copy;
+          }
+
+          const prototype = nativeGetPrototypeOf(value);
+          if (prototype !== Object.prototype && prototype !== null) throw new Error('일반 객체가 아닌 반환값은 비교할 수 없습니다.');
+          if (nativeGetOwnPropertySymbols(value).length) throw new Error('심벌 속성이 있는 반환값은 비교할 수 없습니다.');
+          const keys = nativeKeys(value);
+          nativeSort(keys);
+          if (keys.length > 100) throw new Error('객체 결과가 100개 속성을 넘었습니다.');
+          const copy = nativeCreate(null);
+          for (const key of keys) {
+            if (key.length > 120) throw new Error('객체 속성 이름이 너무 깁니다.');
+            const descriptor = nativeGetOwnPropertyDescriptor(value, key);
+            if (!descriptor || !nativeHasOwn(descriptor, 'value')) throw new Error('객체 결과에는 일반 값만 사용할 수 있습니다.');
+            nativeDefineProperty(copy, key, {
+              value: makeSafeValue(descriptor.value, depth + 1, visited, counter),
+              enumerable: true,
+              configurable: true,
+              writable: true,
+            });
+          }
+          nativeWeakSetDelete(visited, value);
+          return copy;
         }
         try { Object.defineProperty(self, 'indexedDB', { value: undefined, configurable: false, writable: false }); } catch {}
         try { Object.defineProperty(self, 'fetch', { value: undefined, configurable: false, writable: false }); } catch {}
         try { Object.defineProperty(self, 'importScripts', { value: undefined, configurable: false, writable: false }); } catch {}
-        try { Object.defineProperty(self, 'postMessage', { value: print, configurable: false, writable: false }); } catch {}
+        try { nativeDefineProperty(self, 'postMessage', { value: print, configurable: false, writable: false }); } catch {}
         console.log = print;
         console.info = print;
         console.warn = print;
         console.error = print;
-        function sameValue(actual, expected) {
-          try { return JSON.stringify(actual) === JSON.stringify(expected); }
-          catch { return false; }
-        }
         self.onmessage = (event) => {
           const { code, entryPoint, tests } = event.data;
           const results = [];
+          output = '';
+          outputSize = 0;
+          outputWasTruncated = false;
           try {
             if (!/^[A-Za-z_$][\\w$]*$/.test(entryPoint)) throw new Error('함수 이름을 확인할 수 없습니다.');
             const getFunction = new Function(code + '\\n; return typeof ' + entryPoint + ' === "function" ? ' + entryPoint + ' : null;');
             const solution = getFunction();
             if (typeof solution !== 'function') throw new Error(entryPoint + ' 함수를 찾지 못했습니다.');
+            if (!Array.isArray(tests) || tests.length < 1 || tests.length > 20) throw new Error('문제 테스트 개수를 확인할 수 없습니다.');
             for (const test of tests) {
-              const actual = solution(...test.input);
-              results.push({ passed: sameValue(actual, test.expected), actual, expected: test.expected });
+              currentTestOutput = '';
+              try {
+                if (!test || !Array.isArray(test.input)) throw new Error('테스트 입력 형식이 올바르지 않습니다.');
+                const actual = nativeReflectApply(solution, undefined, test.input);
+                const safeActual = makeSafeValue(actual);
+                results[results.length] = { actualAvailable: true, actual: safeActual, output: currentTestOutput, error: '' };
+              } catch (error) {
+                results[results.length] = { actualAvailable: false, actual: null, output: currentTestOutput, error: String(error && error.message || error).slice(0, 500) };
+              }
             }
-            sendToFrame({ type: 'finished', results, output });
+            sendToFrame({ type: 'finished', results, output, outputWasTruncated });
           } catch (error) {
-            sendToFrame({ type: 'finished', results, output, error: String(error && error.message || error).slice(0, 500) });
+            sendToFrame({ type: 'finished', results, output, outputWasTruncated, error: String(error && error.message || error).slice(0, 500) });
           }
         };
+        sendToFrame({ type: 'ready' });
       `;
       const workerUrl = URL.createObjectURL(new Blob([workerSource], { type: 'text/javascript' }));
+      let worker;
+      let activeRequestId;
+      let workerReady = false;
       window.addEventListener('message', (event) => {
-        if (event.source !== parent || !event.data || event.data.type !== 'run') return;
-        const worker = new Worker(workerUrl);
-        worker.onmessage = (workerEvent) => {
-          if (workerEvent.data && workerEvent.data.type === 'finished') {
-            parent.postMessage({ type: 'study-web-result', requestId: event.data.requestId, result: workerEvent.data }, '*');
+        if (event.source !== parent || !event.data) return;
+        if (event.data.type === 'initialize' && !worker) {
+          activeRequestId = event.data.requestId;
+          try {
+            worker = new Worker(workerUrl);
+          } catch {
+            parent.postMessage({
+              type: 'study-web-result',
+              requestId: activeRequestId,
+              result: { error: '코드 실행 작업 공간을 열지 못했어요.', results: [], unavailable: true },
+            }, '*');
+            URL.revokeObjectURL(workerUrl);
+            return;
+          }
+          worker.onmessage = (workerEvent) => {
+            if (workerEvent.data?.type === 'ready') {
+              workerReady = true;
+              parent.postMessage({ type: 'study-web-ready', requestId: activeRequestId }, '*');
+              return;
+            }
+            if (workerEvent.data?.type !== 'finished') return;
+            try {
+              parent.postMessage({ type: 'study-web-result', requestId: activeRequestId, result: workerEvent.data }, '*');
+            } catch {
+              parent.postMessage({ type: 'study-web-result', requestId: activeRequestId, result: { error: '실행 결과를 안전한 형식으로 전달하지 못했어요.', results: [], unavailable: true } }, '*');
+            }
             worker.terminate();
             URL.revokeObjectURL(workerUrl);
-          }
-        };
-        worker.onerror = (workerError) => {
-          parent.postMessage({ type: 'study-web-result', requestId: event.data.requestId, result: { error: workerError.message || '실행 중 오류가 발생했습니다.', results: [] } }, '*');
-          worker.terminate();
-        };
-        worker.postMessage({ code: String(event.data.code).slice(0, 20000), entryPoint: event.data.entryPoint, tests: event.data.tests });
+          };
+          worker.onerror = (workerError) => {
+            parent.postMessage({ type: 'study-web-result', requestId: activeRequestId, result: { error: workerError.message || '코드 실행 공간이 준비되지 않았어요. 다시 시도해 주세요.', results: [], unavailable: true } }, '*');
+            worker.terminate();
+            URL.revokeObjectURL(workerUrl);
+          };
+          return;
+        }
+        if (event.data.type === 'run' && event.data.requestId === activeRequestId && workerReady) {
+          worker.postMessage({ code: String(event.data.code).slice(0, 20000), entryPoint: event.data.entryPoint, tests: event.data.tests });
+        }
       });
     </script>
   </body>

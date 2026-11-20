@@ -1,11 +1,12 @@
 import { createProgressStorage } from './progress-storage.js';
+import { MAX_BACKUP_BYTES } from './progress.js';
 
 const DATABASE_NAME = 'study-web-progress';
 const DATABASE_VERSION = 1;
 const STORE_NAME = 'progress';
 const RECORD_KEY = 'main';
 const FALLBACK_KEY = 'study-web-progress-v1';
-const MAX_LOCAL_BYTES = 900_000;
+export const MAX_LOCAL_BYTES = MAX_BACKUP_BYTES;
 let databasePromise;
 
 function openDatabase() {
@@ -52,12 +53,8 @@ function writeRecord(database, progress) {
 }
 
 function readFallback() {
-  try {
-    const value = localStorage.getItem(FALLBACK_KEY);
-    return value ? JSON.parse(value) : null;
-  } catch {
-    return null;
-  }
+  const value = localStorage.getItem(FALLBACK_KEY);
+  return value ? JSON.parse(value) : null;
 }
 
 function writeFallback(progress) {
@@ -74,12 +71,12 @@ const storage = createProgressStorage({
   readFallback,
   writeFallback,
   clearFallback: () => localStorage.removeItem(FALLBACK_KEY),
+  withWriteLock: (operation) => globalThis.navigator?.locks?.request
+    ? globalThis.navigator.locks.request('study-web-progress', operation)
+    : operation(),
 });
 
 export const getStorageMode = storage.getStorageMode;
 export const loadProgress = storage.loadProgress;
 export const saveProgress = storage.saveProgress;
-
-export async function replaceProgress(value) {
-  return saveProgress(value);
-}
+export const replaceProgress = storage.replaceProgress;

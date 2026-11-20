@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="52.2 49.1 64.8 64.8">
+  <!-- Official FastAPI symbol, cropped from FastAPI's MIT-licensed logo-teal.svg. -->
+  <g transform="translate(52.499596,49.422425)">
+    <g transform="matrix(0.96564264,0,0,0.96251987,-899.3295,194.86874)">
+      <circle cx="964.56165" cy="-169.22266" r="33.234192" fill="#009688" />
+      <path d="m962.2685,-187.40837 -6.64403,14.80375 -3.03599,6.76393 -6.64456,14.80375 30.59142,-21.56768 h-14.35312 l20.99715,-14.80375 z" fill="#fff" />
+    </g>
+  </g>
+</svg>

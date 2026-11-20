@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { lstat, readFile, readdir } from 'node:fs/promises';
 import { basename, dirname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -109,7 +110,7 @@ function auditContentSecurityPolicies(headersText) {
 
   for (const { route, value } of policies) {
     const directives = new Map();
-    const relevantNames = new Set(['connect-src', 'default-src', 'script-src', 'script-src-elem']);
+    const relevantNames = new Set(['connect-src', 'default-src', 'script-src', 'script-src-elem', 'style-src']);
     let duplicateRelevantDirective = false;
 
     for (const directive of value.split(';')) {
@@ -135,12 +136,18 @@ function auditContentSecurityPolicies(headersText) {
     }
 
     const scriptDirectiveNames = ['default-src', 'script-src', 'script-src-elem'];
-    const allowedScriptSources = new Set(["'self'", "'none'", "'unsafe-inline'", "'unsafe-eval'", 'blob:']);
+    const allowedScriptSources = new Set(["'self'", "'none'", "'unsafe-inline'", "'unsafe-eval'", "'wasm-unsafe-eval'", 'blob:']);
     for (const name of scriptDirectiveNames) {
       const sources = directives.get(name);
       if (sources && (sources.length === 0 || sources.some((source) => !allowedScriptSources.has(source)))) {
         violations.push(`Content-Security-Policy for ${route} has an external or unsupported ${name} source.`);
       }
+    }
+
+    const styleSources = directives.get('style-src');
+    const allowedStyleSources = new Set(["'self'", "'unsafe-inline'"]);
+    if (styleSources && (styleSources.length === 0 || styleSources.some((source) => !allowedStyleSources.has(source)))) {
+      violations.push(`Content-Security-Policy for ${route} has an external or unsupported style-src source.`);
     }
 
     if (!directives.has('script-src-elem') && !directives.has('script-src') && !directives.has('default-src')) {
@@ -242,6 +249,103 @@ export async function auditRelease({
     if (Object.keys(manifest.peerDependencies ?? {}).length > 0) {
       violations.push('Peer runtime package dependencies are not allowed in the zero-cost static release.');
     }
+
+    const editorPackages = Object.keys(manifest.devDependencies ?? {}).filter((name) => name.startsWith('@codemirror/'));
+    if (editorPackages.length > 0) {
+      let notices = '';
+      try {
+        notices = await readFile(resolve(output, 'THIRD_PARTY_LICENSES.txt'), 'utf8');
+      } catch {
+        violations.push('Bundled CodeMirror editor requires THIRD_PARTY_LICENSES.txt in the release.');
+      }
+      if (notices && !notices.includes('MIT License')) {
+        violations.push('CodeMirror third-party license notices must include the MIT license text.');
+      }
+      for (const packageName of editorPackages) {
+        if (!notices.includes(`## ${packageName}@`)) {
+          violations.push(`CodeMirror package license is missing from THIRD_PARTY_LICENSES.txt: ${packageName}`);
+        }
+      }
+    }
+
+    if (manifest.devDependencies?.typescript) {
+      if (!filePaths.has('src/typescript-compiler.worker.js')) {
+        violations.push('The TypeScript runner requires its bundled compiler worker in the static release.');
+      }
+      let notices = '';
+      try {
+        notices = await readFile(resolve(output, 'THIRD_PARTY_LICENSES.txt'), 'utf8');
+      } catch {
+        violations.push('The bundled TypeScript compiler requires THIRD_PARTY_LICENSES.txt in the release.');
+      }
+      if (notices && (!notices.includes('## typescript@') || !notices.includes('Apache License'))) {
+        violations.push('The TypeScript compiler requires its Apache-2.0 license notice in the release.');
+      }
+    }
+
+    if (manifest.devDependencies?.pyodide) {
+      const runtimeBase = 'public/runtime/pyodide/';
+      const requiredRuntimeFiles = [
+        'src/fastapi-runner.worker.js',
+        ...['pyodide.mjs', 'pyodide.asm.mjs', 'pyodide.asm.wasm', 'python_stdlib.zip', 'runtime-manifest.json']
+          .map((name) => `${runtimeBase}${name}`),
+      ];
+      for (const requiredPath of requiredRuntimeFiles) {
+        if (!filePaths.has(requiredPath)) {
+          violations.push(`The FastAPI/Pyodide runner requires its local release asset: ${requiredPath}`);
+        }
+      }
+
+      let runtimeManifest = null;
+      try {
+        runtimeManifest = JSON.parse(await readFile(resolve(output, `${runtimeBase}runtime-manifest.json`), 'utf8'));
+      } catch {
+        violations.push('The FastAPI/Pyodide runtime manifest is missing or invalid.');
+      }
+
+      if (runtimeManifest) {
+        if (!runtimeManifest.pyodide || String(runtimeManifest.pyodide) !== String(manifest.devDependencies.pyodide)) {
+          violations.push('The Pyodide package and bundled runtime manifest versions must match exactly.');
+        }
+        if (!runtimeManifest.fastapi || !runtimeManifest.python || !Array.isArray(runtimeManifest.wheels) || runtimeManifest.wheels.length === 0) {
+          violations.push('The FastAPI/Pyodide runtime manifest must declare versions and pinned wheels.');
+        }
+
+        for (const wheel of runtimeManifest.wheels ?? []) {
+          if (!wheel || !/^[A-Za-z0-9_.+-]+\.whl$/.test(wheel.file ?? '') || !/^[a-f0-9]{64}$/i.test(wheel.sha256 ?? '')) {
+            violations.push(`Invalid FastAPI/Pyodide wheel manifest entry: ${wheel?.file ?? '(missing file)'}`);
+            continue;
+          }
+
+          const wheelPath = `${runtimeBase}${wheel.file}`;
+          if (!filePaths.has(wheelPath)) {
+            violations.push(`FastAPI/Pyodide wheel is missing from the release: ${wheelPath}`);
+            continue;
+          }
+          const actualHash = createHash('sha256').update(await readFile(resolve(output, wheelPath))).digest('hex');
+          if (actualHash !== wheel.sha256.toLowerCase()) {
+            violations.push(`FastAPI/Pyodide wheel SHA-256 does not match its manifest: ${wheel.file}`);
+          }
+        }
+
+        let notices = '';
+        try {
+          notices = await readFile(resolve(output, 'THIRD_PARTY_LICENSES.txt'), 'utf8');
+        } catch {
+          violations.push('The FastAPI/Pyodide runtime requires THIRD_PARTY_LICENSES.txt in the release.');
+        }
+        for (const notice of [
+          'Pyodide JavaScript runtime',
+          `fastapi ${runtimeManifest.fastapi}`,
+          `asgi-lifespan ${runtimeManifest.asgiLifespan}`,
+          'opentelemetry-api',
+        ]) {
+          if (notices && !notices.includes(notice)) {
+            violations.push(`FastAPI/Pyodide third-party license notices are missing ${notice}.`);
+          }
+        }
+      }
+    }
   } catch {
     violations.push('Root package.json is missing or invalid.');
   }
@@ -263,6 +367,6 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     process.exitCode = 1;
   } else {
     const largestMiB = (result.largest.bytes / 1024 / 1024).toFixed(3);
-    process.stdout.write(`Release audit passed: ${result.files} files, largest ${largestMiB} MiB, restrictive CSP without removals or external scripts, no runtime packages, server/development files, or local learner data.\n`);
+    process.stdout.write(`Release audit passed: ${result.files} files, largest ${largestMiB} MiB, same-origin scripts and connections, no external script/style sources, isolated runner CSP, no runtime packages, server/development files, or learner data.\n`);
   }
 }

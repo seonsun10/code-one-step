@@ -1,0 +1,197 @@
+{
+  "pyodide": "314.0.7",
+  "python": "3.14.2",
+  "fastapi": "0.143.0",
+  "httpx": "0.28.1",
+  "asgiLifespan": "2.1.0",
+  "packageSource": "official Pyodide CDN + PyPI wheels",
+  "packages": [
+    {
+      "name": "micropip",
+      "version": "0.11.1",
+      "file": "micropip-0.11.1-py3-none-any.whl",
+      "sha256": "e2d52886594fd4cd0d0847110a1c34ae0134d3a970eb4496d3b5eb31ee2d8af6"
+    },
+    {
+      "name": "anyio",
+      "version": "4.13.0",
+      "file": "anyio-4.13.0-py3-none-any.whl",
+      "sha256": "ea08c971f29d33d940864407ceb08601836ac8924d3b4f27db6612ed47faeafc"
+    },
+    {
+      "name": "annotated-doc",
+      "version": "0.0.4",
+      "file": "annotated_doc-0.0.4-py3-none-any.whl",
+      "sha256": "fe0eb2459fae5e2b67eec182a864ee4e3b7fade3bc8542fc5b87b23f224fa7a4"
+    },
+    {
+      "name": "annotated-types",
+      "version": "0.7.0",
+      "file": "annotated_types-0.7.0-py3-none-any.whl",
+      "sha256": "6541523b4b16c1953d2fc9b82fb86c540eea9f78fca329ab371ed13a8b0faa51"
+    },
+    {
+      "name": "certifi",
+      "version": "2026.4.22",
+      "file": "certifi-2026.4.22-py3-none-any.whl",
+      "sha256": "c2c0091986db798df5fd84582d289496f31244a898ec032b7015278c2d82c80c"
+    },
+    {
+      "name": "h11",
+      "version": "0.16.0",
+      "file": "h11-0.16.0-py3-none-any.whl",
+      "sha256": "d920caa25363694bc8de71ba42e5e2bc3353c8df6bcf5025551386e279bca264"
+    },
+    {
+      "name": "httpcore",
+      "version": "1.0.9",
+      "file": "httpcore-1.0.9-py3-none-any.whl",
+      "sha256": "27bc91994ad7e21a8333608b8ba5e2b9655ae9d86820d4cefb03dd8db8c5de48"
+    },
+    {
+      "name": "httpx",
+      "version": "0.28.1",
+      "file": "httpx-0.28.1-py3-none-any.whl",
+      "sha256": "830cb1ec73bb4c46f2e38ebeb3dd50ffb45f62b804dd040519d34fe36f8fdfc7"
+    },
+    {
+      "name": "idna",
+      "version": "3.11",
+      "file": "idna-3.11-py3-none-any.whl",
+      "sha256": "1619419bc899f07c7a608a12e8238e5e0bc15bb25fec90cfe20a86bb849ba0d8"
+    },
+    {
+      "name": "pydantic",
+      "version": "2.12.5",
+      "file": "pydantic-2.12.5-py3-none-any.whl",
+      "sha256": "04854875001e07a8a74d87b7c80296cba168773d8c9804e232d695f82484d7d7"
+    },
+    {
+      "name": "pydantic-core",
+      "version": "2.41.5",
+      "file": "pydantic_core-2.41.5-cp314-cp314-pyemscripten_2026_0_wasm32.whl",
+      "sha256": "54703fa42a0d4d574283cfb8f08050ba7820c9a42b0a21bc1286407d9a9e54da"
+    },
+    {
+      "name": "sniffio",
+      "version": "1.3.1",
+      "file": "sniffio-1.3.1-py3-none-any.whl",
+      "sha256": "1e0f350ca8eac5252c1af9a8d93a7edd70056c1eddf5661f6950688094d1f670"
+    },
+    {
+      "name": "starlette",
+      "version": "1.0.0",
+      "file": "starlette-1.0.0-py3-none-any.whl",
+      "sha256": "df724767987f398d2c504d1201acdb3aa8c0032f2e50c9815c389863f62d0ce1"
+    },
+    {
+      "name": "typing-extensions",
+      "version": "4.15.0",
+      "file": "typing_extensions-4.15.0-py3-none-any.whl",
+      "sha256": "4fec68770a05408e668a4fa53d6bf4f0f684b9dacf820c7c5d6e97d3ad225e29"
+    },
+    {
+      "name": "typing-inspection",
+      "version": "0.4.2",
+      "file": "typing_inspection-0.4.2-py3-none-any.whl",
+      "sha256": "deb989630985f7a7296b90357a947a804a7612cecbb6439d6e71128e01f61051"
+    }
+  ],
+  "wheels": [
+    {
+      "file": "annotated_doc-0.0.4-py3-none-any.whl",
+      "sha256": "fe0eb2459fae5e2b67eec182a864ee4e3b7fade3bc8542fc5b87b23f224fa7a4"
+    },
+    {
+      "file": "annotated_types-0.7.0-py3-none-any.whl",
+      "sha256": "6541523b4b16c1953d2fc9b82fb86c540eea9f78fca329ab371ed13a8b0faa51"
+    },
+    {
+      "file": "anyio-4.13.0-py3-none-any.whl",
+      "sha256": "ea08c971f29d33d940864407ceb08601836ac8924d3b4f27db6612ed47faeafc"
+    },
+    {
+      "file": "asgi_lifespan-2.1.0-py3-none-any.whl",
+      "sha256": "ed840706680e28428c01e14afb3875d7d76d3206f3d5b2f2294e059b5c23804f"
+    },
+    {
+      "file": "certifi-2026.4.22-py3-none-any.whl",
+      "sha256": "c2c0091986db798df5fd84582d289496f31244a898ec032b7015278c2d82c80c"
+    },
+    {
+      "file": "fastapi-0.143.0-py3-none-any.whl",
+      "sha256": "3e9395fd35276425b61b516a31fdd7c77fe2af83e41b4da22e30696fb1304c5d"
+    },
+    {
+      "file": "h11-0.16.0-py3-none-any.whl",
+      "sha256": "d920caa25363694bc8de71ba42e5e2bc3353c8df6bcf5025551386e279bca264"
+    },
+    {
+      "file": "httpcore-1.0.9-py3-none-any.whl",
+      "sha256": "27bc91994ad7e21a8333608b8ba5e2b9655ae9d86820d4cefb03dd8db8c5de48"
+    },
+    {
+      "file": "httpx-0.28.1-py3-none-any.whl",
+      "sha256": "830cb1ec73bb4c46f2e38ebeb3dd50ffb45f62b804dd040519d34fe36f8fdfc7"
+    },
+    {
+      "file": "idna-3.11-py3-none-any.whl",
+      "sha256": "1619419bc899f07c7a608a12e8238e5e0bc15bb25fec90cfe20a86bb849ba0d8"
+    },
+    {
+      "file": "micropip-0.11.1-py3-none-any.whl",
+      "sha256": "e2d52886594fd4cd0d0847110a1c34ae0134d3a970eb4496d3b5eb31ee2d8af6"
+    },
+    {
+      "file": "opentelemetry_api-1.45.1-py3-none-any.whl",
+      "sha256": "b31553efa588ae44bc306f863c785c5333a9ecc091248c6ee68b4b6c87fdedfb"
+    },
+    {
+      "file": "pydantic-2.12.5-py3-none-any.whl",
+      "sha256": "04854875001e07a8a74d87b7c80296cba168773d8c9804e232d695f82484d7d7"
+    },
+    {
+      "file": "pydantic_core-2.41.5-cp314-cp314-pyemscripten_2026_0_wasm32.whl",
+      "sha256": "54703fa42a0d4d574283cfb8f08050ba7820c9a42b0a21bc1286407d9a9e54da"
+    },
+    {
+      "file": "sniffio-1.3.1-py3-none-any.whl",
+      "sha256": "1e0f350ca8eac5252c1af9a8d93a7edd70056c1eddf5661f6950688094d1f670"
+    },
+    {
+      "file": "starlette-1.0.0-py3-none-any.whl",
+      "sha256": "df724767987f398d2c504d1201acdb3aa8c0032f2e50c9815c389863f62d0ce1"
+    },
+    {
+      "file": "typing_extensions-4.15.0-py3-none-any.whl",
+      "sha256": "4fec68770a05408e668a4fa53d6bf4f0f684b9dacf820c7c5d6e97d3ad225e29"
+    },
+    {
+      "file": "typing_inspection-0.4.2-py3-none-any.whl",
+      "sha256": "deb989630985f7a7296b90357a947a804a7612cecbb6439d6e71128e01f61051"
+    }
+  ],
+  "pypiWheels": [
+    {
+      "name": "fastapi",
+      "version": "0.143.0",
+      "file": "fastapi-0.143.0-py3-none-any.whl",
+      "sha256": "3e9395fd35276425b61b516a31fdd7c77fe2af83e41b4da22e30696fb1304c5d",
+      "url": "https://pypi.org/project/fastapi/0.143.0/"
+    },
+    {
+      "name": "asgi-lifespan",
+      "version": "2.1.0",
+      "file": "asgi_lifespan-2.1.0-py3-none-any.whl",
+      "sha256": "ed840706680e28428c01e14afb3875d7d76d3206f3d5b2f2294e059b5c23804f",
+      "url": "https://pypi.org/project/asgi-lifespan/2.1.0/"
+    },
+    {
+      "name": "opentelemetry-api",
+      "version": "1.45.1",
+      "file": "opentelemetry_api-1.45.1-py3-none-any.whl",
+      "sha256": "b31553efa588ae44bc306f863c785c5333a9ecc091248c6ee68b4b6c87fdedfb",
+      "url": "https://pypi.org/project/opentelemetry-api/1.45.1/"
+    }
+  ]
+}
